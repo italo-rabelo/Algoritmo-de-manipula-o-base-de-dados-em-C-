@@ -48,6 +48,7 @@ int main()
 
         leitura.close();
     }
+    cout << "ATUALIZAÇÃOOOOOOOOOO";
 
     return 0;
 }
