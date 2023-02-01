@@ -3,7 +3,11 @@
 #include <sstream>
 #include <string>
 #include <cstdlib>
+//Participantes > Bernardo Bertante Martins, Esther Silva Magalhaes, Ítalo Alves Rabelo
+
 //Ano,Rank,Nome,Pontuacao,Cidade,País
+
+//Ordenação por Cidade e por País
 
 using namespace std;
 
@@ -17,9 +21,37 @@ struct Dados
     string cidade;
     string pais;
 };
+
+void ordenarPorCidade (Dados *universidade, int tam)
+{
+    cout << "Digite o nome da cidade > ";
+    string cidade;
+    cin >> cidade;
+    for (int i = 0; i < tam; i++)
+    {
+        if (universidade[i].cidade == cidade)
+            cout << universidade[i].ano << " " << universidade[i].rank << " " << universidade[i].nome << " " << universidade[i].pontuacao << " " << universidade[i].cidade << universidade[i].pais << endl;
+    }
+    cout << endl;
+}
+
+void ordenarPorPais (Dados *universidade, int tam)
+{
+    cout << "Digite o nome do país > ";
+    string pais;
+    cin >> pais;
+    for (int i = 0; i < tam; i++)
+    {
+        if (universidade[i].pais == pais)
+            cout << universidade[i].ano << " " << universidade[i].rank << " " << universidade[i].nome << " " << universidade[i].pontuacao << " " << universidade[i].cidade << universidade[i].pais << endl;
+    }
+    cout << endl;
+}
+
 int main ()
 {
-    Dados *universidade = new Dados [50];
+    int tam = 50;
+    Dados *universidade = new Dados [tam];
     ifstream read ("rankUniversidades.csv");
     if (read)
     {
