@@ -51,7 +51,6 @@ int main()
     cout << "ATUALIZAÇÃOOOOOOOOOO";
 
     cout << "Hello World";
-    cout << "Oiiii";
-    cout<< "Noooo"
+    cout<<"Confirmado";
     return 0;
 }
