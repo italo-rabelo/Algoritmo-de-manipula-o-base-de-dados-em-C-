@@ -3,55 +3,45 @@
 #include <sstream>
 #include <string>
 #include <cstdlib>
+//Ano,Rank,Nome,Pontuacao,Cidade,País
 
 using namespace std;
 
-struct canais
+struct Dados
 {
 
-    string nome;
-    string inscritos;
-    string views;
-    string videos;
-    string genero;
     string ano;
+    string rank;
+    string nome;
+    string pontuacao;
+    string cidade;
+    string pais;
 };
-
-int main()
+int main ()
 {
-    canais vet[50];
-    string tempString;
-
-    ifstream leitura("top50youtube.csv");
-
-    while (leitura.good())
+    Dados *universidade = new Dados [50];
+    ifstream read ("rankUniversidades.csv");
+    if (read)
     {
-        for (int i = 0; i < 49; i++)
+        int i = 0;
+        while (!read.eof ())
         {
-            getline(leitura, vet[i].nome, ',');
-            getline(leitura, vet[i].inscritos, ',');
-            // vet[i].inscritos = atoi(tempString.c_str());
-            getline(leitura, vet[i].views, ',');
-            getline(leitura, vet[i].videos, ',');
-            getline(leitura, vet[i].genero, ',');
-            getline(leitura, vet[i].ano, ',');
-
-            cout << vet[i].nome << endl
-                 << vet[i].inscritos << endl
-                 << vet[i].views << endl
-                 << vet[i].videos << endl
-                 << vet[i].genero << endl
-                 << vet[i].ano << endl
-                 << endl
-                 << "<------------------->" << endl;
+            getline (read, universidade[i].ano, ',');
+            getline (read, universidade[i].rank, ',');
+            getline (read, universidade[i].nome, ',');
+            getline (read, universidade[i].pontuacao, ',');
+            getline (read, universidade[i].cidade, ',');
+            getline (read, universidade[i].pais, '\n');
+            i++;
         }
 
-        leitura.close();
     }
-    cout << "ATUALIZAÇÃOOOOOOOOOO";
-
-    cout << "Hello World";
-    cout<<"Confirmado";
-    cout<<"Confirmado 2"
+    else
+        cout << "\nFATAL ERROR : FILE DOESN'T EXISTS !\n";
+    read.close ();
+    /*for (int i = 45; i < 50; i++)
+    {
+        cout << universidade[i].ano << " " << universidade[i].rank << " " << universidade[i].nome << " " << universidade[i].pontuacao << " " << universidade[i].cidade << universidade[i].pais << endl;
+    }*/
     return 0;
 }
