@@ -26,7 +26,7 @@ void ordenarPorCidade (Dados *universidade, int tam)
 {
     cout << "Digite o nome da cidade > ";
     string cidade;
-    cin >> cidade;
+    getline (cin, cidade);
     for (int i = 0; i < tam; i++)
     {
         if (universidade[i].cidade == cidade)
@@ -39,7 +39,7 @@ void ordenarPorPais (Dados *universidade, int tam)
 {
     cout << "Digite o nome do país > ";
     string pais;
-    cin >> pais;
+    getline (cin, pais);
     for (int i = 0; i < tam; i++)
     {
         if (universidade[i].pais == pais)
@@ -71,9 +71,6 @@ int main ()
     else
         cout << "\nFATAL ERROR : FILE DOESN'T EXISTS !\n";
     read.close ();
-    /*for (int i = 45; i < 50; i++)
-    {
-        cout << universidade[i].ano << " " << universidade[i].rank << " " << universidade[i].nome << " " << universidade[i].pontuacao << " " << universidade[i].cidade << universidade[i].pais << endl;
-    }*/
+    ordenarPorCidade (universidade, tam);
     return 0;
 }
