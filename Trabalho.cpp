@@ -1,32 +1,77 @@
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <string>
-#include <cstdlib>
-//Participantes > Bernardo Bertante Martins, Esther Silva Magalhaes, Ítalo Alves Rabelo
+#include <cstring>
+#include <sstream>
 
-//Ano,Rank,Nome,Pontuacao,Cidade,País
+// Participantes > Bernardo Bertante Martins, Esther Silva Magalhaes, Ítalo Alves Rabelo
 
-//Ordenação por Cidade e por País
+// Ano,Rank,Nome,Pontuacao,Cidade,País
+
+// Ordenação por Cidade e por País
 
 using namespace std;
 
 struct Dados
 {
-
-    string ano;
-    string rank;
-    string nome;
-    string pontuacao;
-    string cidade;
-    string pais;
+    int ano;
+    int rank;
+    char nome[50]; // 1 ponto
+    float pontuacao;
+    char cidade[50]; //
+    char pais[50];   //
 };
 
-void ordenarPorCidade (Dados *universidade, int tam)
+Dados convertVetor(string vetor[])
+{
+    Dados dados; //
+    dados.ano = stoi(vetor[0]);
+    dados.rank = stoi(vetor[1]);
+    strcpy(dados.nome, vetor[2].c_str());
+    dados.pontuacao = stof(vetor[3]);
+    strcpy(dados.cidade, vetor[4].c_str());
+    strcpy(dados.pais, vetor[5].c_str());
+
+    return dados;
+}
+
+int main()
+{
+
+    ifstream arqCSV("rankUniversidades.csv");
+    ofstream newArqBi;
+    newArqBi.open("rankToBi.bin", ios::binary | ios::out | ios::in | ios::trunc);
+    string vetor[6];
+    string coluna;
+    string aux;
+
+    while (getline(arqCSV, aux))
+    {
+        stringstream linha(aux);
+        for (int i = 0; i < 6; i++)
+        {
+            getline(linha, coluna, ',');
+            vetor[i] = coluna;
+        }
+
+        Dados dados = convertVetor(vetor);
+        newArqBi.write(reinterpret_cast<char *>(&dados), sizeof(Dados));
+    }
+
+    cout << "Arquivo gerado com sucesso!" << endl;
+
+    arqCSV.close();
+    newArqBi.close();
+
+    return 0;
+}
+
+/*
+void ordenarPorCidade(Dados *universidade, int tam)
 {
     cout << "Digite o nome da cidade > ";
     string cidade;
-    getline (cin, cidade);
+    getline(cin, cidade);
     for (int i = 0; i < tam; i++)
     {
         if (universidade[i].cidade == cidade)
@@ -35,11 +80,11 @@ void ordenarPorCidade (Dados *universidade, int tam)
     cout << endl;
 }
 
-void ordenarPorPais (Dados *universidade, int tam)
+void ordenarPorPais(Dados *universidade, int tam)
 {
     cout << "Digite o nome do país > ";
     string pais;
-    getline (cin, pais);
+    getline(cin, pais);
     for (int i = 0; i < tam; i++)
     {
         if (universidade[i].pais == pais)
@@ -47,30 +92,4 @@ void ordenarPorPais (Dados *universidade, int tam)
     }
     cout << endl;
 }
-
-int main ()
-{
-    int tam = 50;
-    Dados *universidade = new Dados [tam];
-    ifstream read ("rankUniversidades.csv");
-    if (read)
-    {
-        int i = 0;
-        while (!read.eof ())
-        {
-            getline (read, universidade[i].ano, ',');
-            getline (read, universidade[i].rank, ',');
-            getline (read, universidade[i].nome, ',');
-            getline (read, universidade[i].pontuacao, ',');
-            getline (read, universidade[i].cidade, ',');
-            getline (read, universidade[i].pais, '\n');
-            i++;
-        }
-
-    }
-    else
-        cout << "\nFATAL ERROR : FILE DOESN'T EXISTS !\n";
-    read.close ();
-    ordenarPorCidade (universidade, tam);
-    return 0;
-}
+*/
