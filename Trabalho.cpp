@@ -25,12 +25,24 @@ Dados convertVetor(string vetor[])
 {
     Dados dados; //
     dados.ano = stoi(vetor[0]);
-    strcpy(dados.nome, vetor[2].c_str());
-    dados.pontuacao = stof(vetor[3]);
-    strcpy(dados.cidade, vetor[4].c_str());
-    strcpy(dados.pais, vetor[5].c_str());
+    strcpy(dados.nome, vetor[1].c_str());
+    dados.pontuacao = stof(vetor[2]);
+    strcpy(dados.cidade, vetor[3].c_str());
+    strcpy(dados.pais, vetor[4].c_str());
 
     return dados;
+}
+
+void printMenu()
+{
+    cout << "------------MENU------------\n" ;
+    cout << "[0] - Encerrar programa\n" ;
+    cout << "[1] - Ordenar arquivo\n" ;
+    cout << "[2] - Remover universidade\n" ;
+    cout << "[3] - Adicionar universidade\n" ;
+    cout << "[4] - Buscar\n" ;
+    cout << "[5] - Imprimir cadastros\n" ;
+    cout << "Escolha uma opção > ";
 }
 
 int main()
@@ -39,7 +51,7 @@ int main()
     ifstream arqCSV("rankUniversidades.csv");
     ofstream newArqBi;
     newArqBi.open("rankToBi.bin", ios::binary | ios::out | ios::in | ios::trunc);
-    string vetor[6];
+    string vetor[5];
     string coluna;
     string aux;
 
@@ -59,10 +71,46 @@ int main()
     cout << "Arquivo gerado com sucesso!" << endl;
 
     arqCSV.close();
+    int opc;
+
+    
+    
+    
     newArqBi.close();
 
     return 0;
 }
+
+// MENU DE OPÇÕES COM CHAMADA DA FUNÇÃO printMenu ();
+    /*do
+    {
+        printMenu();
+        cin >> opc;
+        cout << "----------------------------\n" ;
+
+        switch (opc)
+        {
+            case 0:
+                break;
+            case 1:
+                cout << "FIZ A FUNÇÃO!\n";
+                break;
+            case 2:
+                cout << "FIZ A FUNÇÃO!\n";
+                break;
+            case 3:
+                cout << "FIZ A FUNÇÃO!\n";
+                break;
+            case 4:
+                cout << "FIZ A FUNÇÃO!\n";
+                break;
+            case 5:
+                cout << "FIZ A FUNÇÃO\n!";
+                break;
+            default:
+                cout << "DIGITE UMA OPÇÃO VÁLIDA !\n";
+        }
+    } while (opc != 0);*/
 
 /*
 void ordenarPorCidade(Dados *universidade, int tam)
