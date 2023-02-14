@@ -71,18 +71,10 @@ int main()
     cout << "Arquivo gerado com sucesso!" << endl;
 
     arqCSV.close();
+
     int opc;
-
-    
-    
-    
-    newArqBi.close();
-
-    return 0;
-}
-
-// MENU DE OPÇÕES COM CHAMADA DA FUNÇÃO printMenu ();
-    /*do
+    // MENU DE OPÇÕES COM CHAMADA DA FUNÇÃO printMenu ();
+    do
     {
         printMenu();
         cin >> opc;
@@ -110,7 +102,17 @@ int main()
             default:
                 cout << "DIGITE UMA OPÇÃO VÁLIDA !\n";
         }
-    } while (opc != 0);*/
+    } while (opc != 0);
+
+    
+    
+    
+    newArqBi.close();
+
+    return 0;
+}
+
+
 
 /*
 void ordenarPorCidade(Dados *universidade, int tam)
