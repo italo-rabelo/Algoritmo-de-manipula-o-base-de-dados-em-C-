@@ -12,7 +12,7 @@
 
 using namespace std;
 
-struct Dados
+struct Dados // Struct na qual os dados do arquivo seguirão com o seu padrão (int, char, float, char, char, int);
 {
     int ano;
     char nome[200]; // 1 ponto
@@ -22,7 +22,7 @@ struct Dados
     int valido = 1;
 };
 
-Dados convertVetor(string vetor[])
+Dados convertVetor(string vetor[]) // Subprograma no qual trabalha em conjunto com as primeiras linhas da função main(); Converte as Strings provenientes do arquivo .csv para int, char e float;
 {
     Dados dados; //
     dados.ano = stoi(vetor[0]);
@@ -34,129 +34,235 @@ Dados convertVetor(string vetor[])
     return dados;
 }
 
-void printMenu()
+void printMenu() // Subprograma no qual sempre orientrá o usuário em relação as suas opções de escolha na manipulação dos arquivos;
 {
-    cout << "\n------------MENU------------\n" ;
-    cout << "[0] - Encerrar programa\n" ;
-    cout << "[1] - Ordenar arquivo\n" ;
-    cout << "[2] - Remover universidade\n" ;
-    cout << "[3] - Adicionar universidade\n" ;
-    cout << "[4] - Buscar\n" ;
-    cout << "[5] - Imprimir cadastros\n" ;
-    cout << "[6] - Converter binário para csv\n" ;
-    cout << "\nEscolha uma opção > ";
+    cout << "\n|--------------MENU--------------|\n"
+         << endl;
+    cout << "[0] - Encerrar programa\n";
+    cout << "[1] - Ordenar arquivo\n";
+    cout << "[2] - Remover universidade\n";
+    cout << "[3] - Adicionar universidade\n";
+    cout << "[4] - Buscar\n";
+    cout << "[5] - Imprimir cadastros\n";
+    cout << "[6] - Converter binário para CSV\n";
+    cout << "[7] - Ver Universidades cadastradas\n"
+         << endl;
+    cout << "\nEscolha uma opção! > ";
 }
 
-void ordenacao(fstream &newArqBi)
+void ordenacao(fstream &newArqBi) // Subprograma no qual permite a ordenação dos dados contidos no arquivo binário, isso por meio de um vetor auxiliar no qual reescreve os dados já ordenados novamente no arquivo binário;
 {
-     // OPERAÇÕES PARA CALCULAR A QUANTIDADE DE REGISTROS PRESENTES NO ARQUIVO BINÁRIO
+    // OPERAÇÕES PARA CALCULAR A QUANTIDADE DE REGISTROS PRESENTES NO ARQUIVO BINÁRIO
     long int tamArq = newArqBi.tellg();
-    int quantUni = int(tamArq / sizeof (Dados));
+    int quantUni = int(tamArq / sizeof(Dados));
     Dados vet[quantUni];
     cout << "\nQUANTI UNI = " << quantUni << endl;
 
     // LOOP PARA REALIZAR A LEITURA DO VETOR DE STRUCT A PARTIR DO ARQUIVO BINÁRIO
     for (int i = 0; i < quantUni; i++)
     {
-        newArqBi.seekg (0, newArqBi.beg);
-        newArqBi.seekg (i * sizeof(Dados));
-        newArqBi.read ((char*)&vet[i], sizeof (Dados));
-        //cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " "  << vet[i].pais << endl;
+        newArqBi.seekg(0, newArqBi.beg);
+        newArqBi.seekg(i * sizeof(Dados));
+        newArqBi.read((char *)&vet[i], sizeof(Dados));
+        // cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " "  << vet[i].pais << endl;
     }
-    
+
     newArqBi.close();
 
-    //ORDENAÇÃO POR ANO(1) E POR PONTUAÇÃO(2)
+    // ORDENAÇÃO POR ANO(1) E POR PONTUAÇÃO(2)
     int opc;
     cin >> opc;
     switch (opc)
     {
-        case 1:
-        //ordena por ano
+    case 1:
+        // ordena por ano
         break;
-        case 2:
-        //ordena por pontuação
+    case 2:
+        // ordena por pontuação
         break;
-        default:
+    default:
+        break;
+    }
+}
+
+void cadastrarUniv(Dados dados) // Subprograma no qual permite o usuário adicionar 1 ou Mais Universidades ao arquivo binário quando chamado;
+
+{
+    int opc;
+    cout << "Quantas Universidades deseja cadastrar?" << endl
+         << endl;
+    cout << "[1] Cadastrar apenas 1." << endl
+         << "[2] Mais de uma." << endl;
+    cin >> opc;
+    cout << endl;
+
+    ofstream novoCadastro;
+    novoCadastro.open("rankToBi.bin", ios::binary | ios::out | ios::app);
+
+    switch (opc)
+    {
+    case 1: // AO SER EXECUTADO, SOMENTE UMA FACULDADE NOVA SERÁ ADICIONADA AO ARQUIVO
+        cout << "Ano: ";
+        cin >> dados.ano;
+        cin.ignore();
+        cout << "Nome: ";
+        cin.getline(dados.nome, 200);
+        cout << "Pontuacao: ";
+        cin >> dados.pontuacao;
+        cin.ignore();
+        cout << "Cidade: ";
+        cin.getline(dados.cidade, 200);
+        cout << "País: ";
+        cin.getline(dados.pais, 200);
+
+        novoCadastro.write((char *)&dados, sizeof(Dados));
+        break;
+
+    case 2: // AO SER EXECUTADO, MAIS DE UMA FACULDADE NOVA SERÁ ADICIONADA AO ARQUIVO (ENTRARÁ EM UM LOOP [FOR()]);
+        cout << "Quantas ao todo você deseja cadastrar? ";
+        int segOpc;
+        cin >> segOpc;
+        cout << endl;
+
+        for (int i = 0; i < segOpc; i++)
+        {
+            cout << "Nova Faculdade: " << i + 1 << endl;
+
+            cout << "Ano: ";
+            cin >> dados.ano;
+            cin.ignore();
+            cout << "Nome: ";
+            cin.getline(dados.nome, 200);
+            cout << "Pontuacao: ";
+            cin >> dados.pontuacao;
+            cin.ignore();
+            cout << "Cidade: ";
+            cin.getline(dados.cidade, 200);
+            cout << "País: ";
+            cin.getline(dados.pais, 200);
+
+            novoCadastro.write((char *)&dados, sizeof(Dados));
+
+            cout << endl;
+        }
+        break;
+
+    default:
+        cout << "Opação Inválida";
         break;
     }
 
-
-   
+    novoCadastro.close();
 }
 
-void buscarPorCidade(fstream &newArqBi)
+void buscarPorCidade(fstream &newArqBi) // Subprograma que tem a função de fazer a busca de determinada cidade expecificada pelo usuário dentro do arquivo binário;
 {
     // OPERAÇÕES PARA CALCULAR A QUANTIDADE DE REGISTROS PRESENTES NO ARQUIVO BINÁRIO
     long int tamArq = newArqBi.tellg();
-    int quantUni = int(tamArq / sizeof (Dados));
+    int quantUni = int(tamArq / sizeof(Dados));
     Dados vet[quantUni];
 
     // LOOP PARA REALIZAR A LEITURA DO VETOR DE STRUCT A PARTIR DO ARQUIVO BINÁRIO
     for (int i = 0; i < quantUni; i++)
     {
-        newArqBi.seekg (0, newArqBi.beg);
-        newArqBi.seekg (i * sizeof(Dados));
-        newArqBi.read ((char*)&vet[i], sizeof (Dados));
-        //cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " "  << vet[i].pais << endl;
+        newArqBi.seekg(0, newArqBi.beg);
+        newArqBi.seekg(i * sizeof(Dados));
+        newArqBi.read((char *)&vet[i], sizeof(Dados));
+        // cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " "  << vet[i].pais << endl;
     }
 
     cout << "Digite o nome da cidade > ";
     cin.clear();
     cin.ignore();
     string cidade;
-    getline (cin, cidade);
+    getline(cin, cidade);
     cout << endl;
     for (int i = 0; i < quantUni; i++)
     {
         if (vet[i].cidade == cidade)
-            cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " "  << vet[i].pais << endl;
+            cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " " << vet[i].pais << endl;
     }
     cout << endl;
     newArqBi.close();
 }
 
-void buscarPorPais(fstream &newArqBi)
+void buscarPorPais(fstream &newArqBi) // Subprograma que tem a função de fazer a busca de determinado país expecificado pelo usuário dentro do arquivo binário;
 {
     // OPERAÇÕES PARA CALCULAR A QUANTIDADE DE REGISTROS PRESENTES NO ARQUIVO BINÁRIO
     long int tamArq = newArqBi.tellg();
-    int quantUni = int(tamArq / sizeof (Dados));
+    int quantUni = int(tamArq / sizeof(Dados));
     Dados vet[quantUni];
 
     // LOOP PARA REALIZAR A LEITURA DO VETOR DE STRUCT A PARTIR DO ARQUIVO BINÁRIO
     for (int i = 0; i < quantUni; i++)
     {
-        newArqBi.seekg (0, newArqBi.beg);
-        newArqBi.seekg (i * sizeof(Dados));
-        newArqBi.read ((char*)&vet[i], sizeof (Dados));
-        //cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " "  << vet[i].pais << endl;
+        newArqBi.seekg(0, newArqBi.beg);
+        newArqBi.seekg(i * sizeof(Dados));
+        newArqBi.read((char *)&vet[i], sizeof(Dados));
+        // cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " "  << vet[i].pais << endl;
     }
 
     cout << "Digite o nome do país > ";
     cin.clear();
     cin.ignore();
     string pais;
-    getline (cin, pais);
-    //cin.ignore();
+    getline(cin, pais);
+    // cin.ignore();
     cout << endl;
     for (int i = 0; i < quantUni; i++)
     {
         if (vet[i].pais == pais)
-            cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " "  << vet[i].pais << endl;
+            cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " " << vet[i].pais << endl;
     }
     cout << endl;
     newArqBi.close();
 }
 
-int retornaEscolha ()
+int retornaEscolha() //
 {
     int n;
     cin >> n;
     return n;
 }
 
+void printUniversidades(Dados dados) // Subprograma que exibe/printa no terminal o atual estado(informações) do arquivo binário, porém em decimal;
+{
+    ifstream arqBi;
+    arqBi.open("rankToBi.bin", ios::binary | ios::in);
+    while (arqBi.read((char *)&dados, sizeof(Dados)))
+    {
+        cout << dados.ano << " " << dados.nome << " " << dados.pontuacao << " " << dados.cidade << " " << dados.pais << endl;
+    }
+    arqBi.close();
+}
+
+void exportarCSV(fstream &arqBi) // Subprograma na qual sua função é de converter o atual arquivo binário para um arquivo novo .csv;
+{
+    ofstream arqCSV("binToCSV.csv");
+
+    long int tamArq = arqBi.tellg();
+    int quantUniv = int(tamArq / sizeof(Dados));
+    int cont = 0;
+    Dados universidade;
+
+    while (cont < quantUniv)
+    {
+        arqBi.seekg(cont * sizeof(Dados));
+        arqBi.read((char *)&universidade, sizeof(Dados));
+
+        // if (universidade.valido != 0)
+        {
+            arqCSV << universidade.ano << ";" << universidade.nome << ";" << universidade.pontuacao << ";" << universidade.cidade << ";" << universidade.pais << endl;
+        }
+
+        cont++;
+    }
+}
+
 int main()
 {
+
+    // Aqui começa a conversão dos dados do arquivo .csv para o arquivo binário;
 
     ifstream arqCSV("rankUniversidades.csv");
     fstream newArqBi;
@@ -164,6 +270,7 @@ int main()
     string vetor[5];
     string coluna;
     string aux;
+    Dados dados;
 
     while (getline(arqCSV, aux))
     {
@@ -174,7 +281,7 @@ int main()
             vetor[i] = coluna;
         }
 
-        Dados dados = convertVetor(vetor);
+        dados = convertVetor(vetor); // Até então todos os dados se encontram como string, porém a partir de agora são convertidos para seus devidos tipos por meio desse subprograma;
         newArqBi.write(reinterpret_cast<char *>(&dados), sizeof(Dados));
     }
     newArqBi.close();
@@ -183,75 +290,83 @@ int main()
 
     arqCSV.close();
 
+    printUniversidades(dados); // Os dados iniciais na abetura atual do programa são mostrados logo de cara para o usuáio, para que o mesmo tenha noção do estado corrente do arquivo binário;
+
     int opc; // varável do switch
 
     // MENU DE OPÇÕES COM CHAMADA DA FUNÇÃO printMenu ();
     do
     {
         printMenu();
-          /*[0] - Encerrar programa
-            [1] - Ordenar arquivo
-            [2] - Remover universidade
-            [3] - Adicionar universidade
-            [4] - Buscar
-            [5] - Imprimir cadastros
-            [6] - Converter binário para csv*/
+        /*[0] - Encerrar programa
+          [1] - Ordenar arquivo
+          [2] - Remover universidade
+          [3] - Adicionar universidade
+          [4] - Buscar
+          [5] - Imprimir cadastros
+          [6] - Converter Binário para CSV
+          [7] - Ver Universidades
+          */
         cin >> opc;
-        cout << "----------------------------\n" ;
+        cout << "----------------------------\n";
 
-        int opt = 0; //  variável que receberá o retorno da função  retornaEscolha();
+        int opt = 0; //  variável que receberá o retorno da função retornaEscolha();
 
-        switch (opc)
+        switch (opc) // Dentro desse switch principal, dependendo de qual número o usuário digitar, diferentes funções são acionadas! Cada um com seus respctivos objetivos.
         {
-            case 0:
+        case 0:
+            break;
+        case 1:
+            newArqBi.open("rankToBi.bin", ios::in | ios::binary | ios::ate);
+            ordenacao(newArqBi);
+            break;
+
+        case 2:
+            cout << "FIZ A FUNÇÃO\n!" << endl;
+            break;
+
+        case 3:
+            cout << "Cadastrar nova(s) Universidades:\n"
+                 << endl;
+            cadastrarUniv(dados);
+            break;
+
+        case 4:
+            newArqBi.open("rankToBi.bin", ios::in | ios::binary | ios::ate);
+            cout << "[1] - Buscar por cidade\n[2] - Busca por país\nOu pressione qualquer número para voltar ao menu anterior\n> ";
+            opt = retornaEscolha();
+            if (opt == 1)
+            {
+                buscarPorCidade(newArqBi);
                 break;
-            case 1:
-                
-                newArqBi.open ("rankToBi.bin", ios::in | ios::binary | ios::ate);
-                ordenacao(newArqBi);
+            }
+            else if (opt == 2)
+            {
+                buscarPorPais(newArqBi);
+                break;
+            }
+            else
                 break;
 
-            case 2:
-                cout << "FIZ A FUNÇÃO!\n";
-                break;
+        case 5:
+            cout << "FIZ A FUNÇÃO\n!";
+            break;
 
-            case 3:
-                cout << "FIZ A FUNÇÃO!\n";
-                break;
-
-            case 4:
-                newArqBi.open ("rankToBi.bin", ios::in | ios::binary | ios::ate);
-                cout << "[1] - Buscar por cidade\n[2] - Busca por país\nOu pressione qualquer número para voltar ao menu anterior\n> ";
-                opt = retornaEscolha();
-                if (opt == 1)
-                {
-                    buscarPorCidade(newArqBi);
-                    break;
-                }
-                else if (opt == 2)
-                {
-                    buscarPorPais(newArqBi);
-                    break;
-                }
-                else 
-                    break;
-
-            case 5:
-                cout << "FIZ A FUNÇÃO\n!";
-                break;
-            
-            case 6:
-                //função converte binario para csv
-                break;
-            default:
-                cout << "DIGITE UMA OPÇÃO VÁLIDA !\n";
+        case 6:
+            cout << "Arquivo CSV exportado.";
+            newArqBi.open("rankToBi.bin", ios::binary | ios::in | ios::out);
+            exportarCSV(newArqBi);
+            newArqBi.close();
+            break;
+        case 7:
+            cout << "Universidades Cadastradas e Ativas:" << endl
+                 << endl;
+            printUniversidades(dados);
+            break;
+        default:
+            cout << "DIGITE UMA OPÇÃO VÁLIDA !\n";
         }
     } while (opc != 0);
-
-    
-    
-    
-    
 
     return 0;
 }
