@@ -42,15 +42,71 @@ void printMenu()
     cout << "[3] - Adicionar universidade\n" ;
     cout << "[4] - Buscar\n" ;
     cout << "[5] - Imprimir cadastros\n" ;
+    cout << "[6] - Converter binário para csv\n" ;
     cout << "Escolha uma opção > ";
+}
+
+void ordenacao(fstream &newArqBi)
+{
+    // OPERAÇÕES PARA CALCULAR A QUANTIDADE DE REGISTROS PRESENTES NO ARQUIVO BINÁRIO
+    long int tamArq = newArqBi.tellg();
+    int quantUni = int(tamArq / sizeof (Dados));
+    Dados vet[quantUni];
+    cout << "\nQUANTI UNI = " << quantUni << endl;
+
+    // LOOP PARA REALIZAR A LEITURA DO VETOR DE STRUCT A PARTIR DO ARQUIVO BINÁRIO
+    for (int i = 0; i < quantUni; i++)
+    {
+        newArqBi.seekg (0, newArqBi.beg);
+        newArqBi.seekg (i * sizeof(Dados));
+        newArqBi.read ((char*)&vet[i], sizeof (Dados));
+        //cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " "  << vet[i].pais << endl;
+    }
+    
+    newArqBi.close();
+}
+
+void buscarPorCidade(fstream &newArqBi)
+{
+    // OPERAÇÕES PARA CALCULAR A QUANTIDADE DE REGISTROS PRESENTES NO ARQUIVO BINÁRIO
+    long int tamArq = newArqBi.tellg();
+    int quantUni = int(tamArq / sizeof (Dados));
+    Dados vet[quantUni];
+    cout << "\nQUANTI UNI = " << quantUni << endl;
+
+    // LOOP PARA REALIZAR A LEITURA DO VETOR DE STRUCT A PARTIR DO ARQUIVO BINÁRIO
+    for (int i = 0; i < quantUni; i++)
+    {
+        newArqBi.seekg (0, newArqBi.beg);
+        newArqBi.seekg (i * sizeof(Dados));
+        newArqBi.read ((char*)&vet[i], sizeof (Dados));
+        //cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " "  << vet[i].pais << endl;
+    }
+
+    cout << "Digite o nome da cidade > ";
+    string cidade;
+    getline(cin, cidade);
+    for (int i = 0; i < quantUni; i++)
+    {
+        if (vet[i].cidade == cidade)
+            cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " "  << vet[i].pais << endl;
+    }
+    cout << endl;
+}
+
+int retornaEscolha ()
+{
+    int n;
+    cin >> n;
+    return n;
 }
 
 int main()
 {
 
     ifstream arqCSV("rankUniversidades.csv");
-    ofstream newArqBi;
-    newArqBi.open("rankToBi.bin", ios::binary | ios::out | ios::in | ios::trunc);
+    fstream newArqBi;
+    newArqBi.open("rankToBi.bin", ios::binary | ios::out | ios::in);
     string vetor[5];
     string coluna;
     string aux;
@@ -67,6 +123,7 @@ int main()
         Dados dados = convertVetor(vetor);
         newArqBi.write(reinterpret_cast<char *>(&dados), sizeof(Dados));
     }
+    newArqBi.close();
 
     cout << "Arquivo gerado com sucesso!" << endl;
 
@@ -80,11 +137,15 @@ int main()
         cin >> opc;
         cout << "----------------------------\n" ;
 
+        fstream arqBinOrd;
+
         switch (opc)
         {
             case 0:
                 break;
             case 1:
+                
+                arqBinOrd.open ("rankToBi.bin", ios::in | ios::binary | ios::ate);
                 cout << "FIZ A FUNÇÃO!\n";
                 break;
             case 2:
@@ -94,8 +155,19 @@ int main()
                 cout << "FIZ A FUNÇÃO!\n";
                 break;
             case 4:
-                cout << "FIZ A FUNÇÃO!\n";
-                break;
+                cout << "[1] - Buscar por cidade\n[2] - Busca por país\n> ";
+                if (retornaEscolha() == 1)
+                {
+                    buscarPorCidade(newArqBi);
+                    break;
+                }
+                else if (retornaEscolha() == 2)
+                {
+                    //buscarPorPais(newArqBi);
+                    break;
+                }
+                else                
+                    break;
             case 5:
                 cout << "FIZ A FUNÇÃO\n!";
                 break;
@@ -105,9 +177,9 @@ int main()
     } while (opc != 0);
 
     
+    ordenacao(newArqBi);
     
     
-    newArqBi.close();
 
     return 0;
 }
@@ -115,18 +187,7 @@ int main()
 
 
 /*
-void ordenarPorCidade(Dados *universidade, int tam)
-{
-    cout << "Digite o nome da cidade > ";
-    string cidade;
-    getline(cin, cidade);
-    for (int i = 0; i < tam; i++)
-    {
-        if (universidade[i].cidade == cidade)
-            cout << universidade[i].ano << " " << universidade[i].rank << " " << universidade[i].nome << " " << universidade[i].pontuacao << " " << universidade[i].cidade << universidade[i].pais << endl;
-    }
-    cout << endl;
-}
+
 void ordenarPorPais(Dados *universidade, int tam)
 {
     cout << "Digite o nome do país > ";
