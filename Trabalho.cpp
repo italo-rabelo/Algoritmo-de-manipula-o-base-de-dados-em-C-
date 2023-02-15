@@ -3,7 +3,7 @@
 #include <string>
 #include <cstring>
 #include <sstream>
-
+#include <windows.h>
 // Participantes > Bernardo Bertante Martins, Esther Silva Magalhaes, Ítalo Alves Rabelo
 
 // Ano,Nome,Pontuacao,Cidade,País
@@ -50,13 +50,78 @@ void printMenu() // Subprograma no qual sempre orientrá o usuário em relação
     cout << "\nEscolha uma opção! > ";
 }
 
-void ordenacao(fstream &newArqBi) // Subprograma no qual permite a ordenação dos dados contidos no arquivo binário, isso por meio de um vetor auxiliar no qual reescreve os dados já ordenados novamente no arquivo binário;
+void intercala(Dados *a, int inicio, int meio, int fim, int aux_escolha) {
+	int i = inicio, j = meio + 1;
+	int tamanho = fim - inicio + 1;
+	Dados *aux = new Dados[tamanho]; // vetor auxiliar
+	if(aux_escolha == 1){
+		for (int k=0; k < tamanho; k++) {//ano
+			if ((i <= meio) and (j <= fim)){ 
+				if (a[i].ano >= a[j].ano){ 
+					aux[k] = a[i]; // copia trecho1 em aux[]
+					i++; 			// avança em trecho1
+				} else { // 
+					aux[k] = a[j]; // copia trecho2 em aux[]
+					j++;	 		// avanca em trecho2
+				}	
+			} 
+			else if (i > meio) { // terminou o trecho1	
+				aux[k] = a[j];
+				j++;
+			} else { 				 // terminou o trecho2
+				aux[k] = a[i];
+				i++;
+			}		
+		}	
+		// terminando: copiar de aux[] em a[inicio:fim]
+		for (int k=0; k < tamanho; k++){ 
+			a[inicio + k] = aux[k];
+		}
+	}
+	else if(aux_escolha == 2){//pontuacao
+		for (int k=0; k < tamanho; k++) {
+			if ((i <= meio) and (j <= fim)){ 
+				if (a[i].pontuacao >= a[j].pontuacao){ 
+					aux[k] = a[i]; // copia trecho1 em aux[]
+					i++; 			// avança em trecho1
+				} else { // 
+					aux[k] = a[j]; // copia trecho2 em aux[]
+					j++;	 		// avanca em trecho2
+				}	
+			} 
+			else if (i > meio) { // terminou o trecho1	
+				aux[k] = a[j];
+				j++;
+			} else { 				 // terminou o trecho2
+				aux[k] = a[i];
+				i++;
+			}		
+		}	
+		// terminando: copiar de aux[] em a[inicio:fim]
+		for (int k=0; k < tamanho; k++){ 
+			a[inicio + k] = aux[k];
+		}
+	}
+}
+
+
+void mergesort(Dados *a, int inicio, int fim, int escolha){
+	int meio;
+	if (inicio < fim) {
+		meio = (inicio + fim)/2; 
+		mergesort(a, inicio, meio,escolha);
+		mergesort(a, meio+1, fim,escolha);
+		intercala(a, inicio, meio, fim, escolha);
+	}
+}
+
+void ordenacao(fstream &newArqBi,int aux_opcao) // Subprograma no qual permite a ordenação dos dados contidos no arquivo binário, isso por meio de um vetor auxiliar no qual reescreve os dados já ordenados novamente no arquivo binário;
 {
     // OPERAÇÕES PARA CALCULAR A QUANTIDADE DE REGISTROS PRESENTES NO ARQUIVO BINÁRIO
     long int tamArq = newArqBi.tellg();
     int quantUni = int(tamArq / sizeof(Dados));
-    Dados vet[quantUni];
-    cout << "\nQUANTI UNI = " << quantUni << endl;
+    Dados *vet = new Dados[quantUni];
+    //cout << "\nQUANTI UNI = " << quantUni << endl;
 
     // LOOP PARA REALIZAR A LEITURA DO VETOR DE STRUCT A PARTIR DO ARQUIVO BINÁRIO
     for (int i = 0; i < quantUni; i++)
@@ -70,19 +135,39 @@ void ordenacao(fstream &newArqBi) // Subprograma no qual permite a ordenação d
     newArqBi.close();
 
     // ORDENAÇÃO POR ANO(1) E POR PONTUAÇÃO(2)
-    int opc;
-    cin >> opc;
-    switch (opc)
+    switch (aux_opcao)
     {
-    case 1:
-        // ordena por ano
-        break;
-    case 2:
-        // ordena por pontuação
-        break;
-    default:
-        break;
+		case 1:
+			mergesort(vet, 0, quantUni - 1, aux_opcao);
+			// ordena por ano
+			break;
+		case 2:
+			mergesort(vet, 0, quantUni - 1, aux_opcao);
+			// ordena por pontuação
+			break;
+		default:
+			cout << "OPÇÃO INVÁLIDA!\n";
+			break;
     }
+    //mostrar na tela a ordenação
+    /*for(int i=0; i < quantUni; ++i){
+		cout << vet[i].ano << " " << vet[i].nome << " " <<vet[i].pontuacao << " " << vet[i].cidade << " " << vet[i].pais << endl;
+	}
+	*/
+	newArqBi.open("rankToBi.bin", ios::trunc | ios::out);
+	
+	for(int i=0; i < quantUni; ++i){
+		newArqBi.seekg(i * sizeof(Dados));
+		newArqBi.write(reinterpret_cast<char*>(&vet[i]), sizeof(vet[i]));
+	}
+	
+	cout << "\nOrdenação concluída!" << endl;
+	
+	/*
+	if(opcaoOrd != 1 and opcaoOrd != 2){
+		cout << "Opção de ordenação inválida" << endl;
+	} 
+	*/
 }
 
 void cadastrarUniv(Dados dados) // Subprograma no qual permite o usuário adicionar 1 ou Mais Universidades ao arquivo binário quando chamado;
@@ -264,6 +349,7 @@ int main()
 
     // Aqui começa a conversão dos dados do arquivo .csv para o arquivo binário;
 
+	SetConsoleOutputCP(CP_UTF8); 
     ifstream arqCSV("rankUniversidades.csv");
     fstream newArqBi;
     newArqBi.open("rankToBi.bin", ios::binary | ios::out | ios::in);
@@ -317,8 +403,14 @@ int main()
         case 0:
             break;
         case 1:
-            newArqBi.open("rankToBi.bin", ios::in | ios::binary | ios::ate);
-            ordenacao(newArqBi);
+            int opcao;
+            newArqBi.open ("rankToBi.bin", ios::in | ios::binary | ios::ate);
+            cout << "Escolha como o arquivo será ordenado:\n";
+			cout << "[1] - Por Ano\n"
+                 << "[2] - Por Pontuação\n";
+            cin >> opcao;
+            ordenacao(newArqBi,opcao);
+            newArqBi.close();
             break;
 
         case 2:
