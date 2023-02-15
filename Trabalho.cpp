@@ -49,7 +49,7 @@ void printMenu()
 
 void ordenacao(fstream &newArqBi)
 {
-    // OPERAÇÕES PARA CALCULAR A QUANTIDADE DE REGISTROS PRESENTES NO ARQUIVO BINÁRIO
+     // OPERAÇÕES PARA CALCULAR A QUANTIDADE DE REGISTROS PRESENTES NO ARQUIVO BINÁRIO
     long int tamArq = newArqBi.tellg();
     int quantUni = int(tamArq / sizeof (Dados));
     Dados vet[quantUni];
@@ -65,6 +65,24 @@ void ordenacao(fstream &newArqBi)
     }
     
     newArqBi.close();
+
+    //ORDENAÇÃO POR ANO(1) E POR PONTUAÇÃO(2)
+    int opc;
+    cin >> opc;
+    switch (opc)
+    {
+        case 1:
+        //ordena por ano
+        break;
+        case 2:
+        //ordena por pontuação
+        break;
+        default:
+        break;
+    }
+
+
+   
 }
 
 void buscarPorCidade(fstream &newArqBi)
@@ -237,21 +255,3 @@ int main()
 
     return 0;
 }
-
-
-
-/*
-
-void ordenarPorPais(Dados *universidade, int tam)
-{
-    cout << "Digite o nome do país > ";
-    string pais;
-    getline(cin, pais);
-    for (int i = 0; i < tam; i++)
-    {
-        if (universidade[i].pais == pais)
-            cout << universidade[i].ano << " " << universidade[i].rank << " " << universidade[i].nome << " " << universidade[i].pontuacao << " " << universidade[i].cidade << universidade[i].pais << endl;
-    }
-    cout << endl;
-}
-*/
