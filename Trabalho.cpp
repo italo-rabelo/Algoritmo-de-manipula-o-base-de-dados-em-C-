@@ -50,11 +50,11 @@ void printMenu() // Subprograma no qual sempre orientrá o usuário em relação
     cout << "\nEscolha uma opção! > ";
 }
 
-void intercala(Dados *a, int inicio, int meio, int fim, int aux_escolha) {
+void intercala(Dados *a, int inicio, int meio, int fim, int aux_opcao) {
 	int i = inicio, j = meio + 1;
 	int tamanho = fim - inicio + 1;
 	Dados *aux = new Dados[tamanho]; // vetor auxiliar
-	if(aux_escolha == 1){
+	if(aux_opcao == 1){
 		for (int k=0; k < tamanho; k++) {//ano
 			if ((i <= meio) and (j <= fim)){ 
 				if (a[i].ano >= a[j].ano){ 
@@ -78,7 +78,7 @@ void intercala(Dados *a, int inicio, int meio, int fim, int aux_escolha) {
 			a[inicio + k] = aux[k];
 		}
 	}
-	else if(aux_escolha == 2){//pontuacao
+	else if(aux_opcao == 2){//pontuacao
 		for (int k=0; k < tamanho; k++) {
 			if ((i <= meio) and (j <= fim)){ 
 				if (a[i].pontuacao >= a[j].pontuacao){ 
