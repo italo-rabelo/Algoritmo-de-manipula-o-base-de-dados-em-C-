@@ -35,7 +35,7 @@ Dados convertVetor(string vetor[])
 
 void printMenu()
 {
-    cout << "------------MENU------------\n" ;
+    cout << "\n------------MENU------------\n" ;
     cout << "[0] - Encerrar programa\n" ;
     cout << "[1] - Ordenar arquivo\n" ;
     cout << "[2] - Remover universidade\n" ;
@@ -43,7 +43,7 @@ void printMenu()
     cout << "[4] - Buscar\n" ;
     cout << "[5] - Imprimir cadastros\n" ;
     cout << "[6] - Converter binário para csv\n" ;
-    cout << "Escolha uma opção > ";
+    cout << "\nEscolha uma opção > ";
 }
 
 void ordenacao(fstream &newArqBi)
@@ -72,7 +72,6 @@ void buscarPorCidade(fstream &newArqBi)
     long int tamArq = newArqBi.tellg();
     int quantUni = int(tamArq / sizeof (Dados));
     Dados vet[quantUni];
-    cout << "\nQUANTI UNI = " << quantUni << endl;
 
     // LOOP PARA REALIZAR A LEITURA DO VETOR DE STRUCT A PARTIR DO ARQUIVO BINÁRIO
     for (int i = 0; i < quantUni; i++)
@@ -84,14 +83,50 @@ void buscarPorCidade(fstream &newArqBi)
     }
 
     cout << "Digite o nome da cidade > ";
+    cin.clear();
+    cin.ignore();
     string cidade;
-    getline(cin, cidade);
+    getline (cin, cidade);
+    cout << endl;
     for (int i = 0; i < quantUni; i++)
     {
         if (vet[i].cidade == cidade)
             cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " "  << vet[i].pais << endl;
     }
     cout << endl;
+    newArqBi.close();
+}
+
+void buscarPorPais(fstream &newArqBi)
+{
+    // OPERAÇÕES PARA CALCULAR A QUANTIDADE DE REGISTROS PRESENTES NO ARQUIVO BINÁRIO
+    long int tamArq = newArqBi.tellg();
+    int quantUni = int(tamArq / sizeof (Dados));
+    Dados vet[quantUni];
+
+    // LOOP PARA REALIZAR A LEITURA DO VETOR DE STRUCT A PARTIR DO ARQUIVO BINÁRIO
+    for (int i = 0; i < quantUni; i++)
+    {
+        newArqBi.seekg (0, newArqBi.beg);
+        newArqBi.seekg (i * sizeof(Dados));
+        newArqBi.read ((char*)&vet[i], sizeof (Dados));
+        //cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " "  << vet[i].pais << endl;
+    }
+
+    cout << "Digite o nome do país > ";
+    cin.clear();
+    cin.ignore();
+    string pais;
+    getline (cin, pais);
+    //cin.ignore();
+    cout << endl;
+    for (int i = 0; i < quantUni; i++)
+    {
+        if (vet[i].pais == pais)
+            cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " "  << vet[i].pais << endl;
+    }
+    cout << endl;
+    newArqBi.close();
 }
 
 int retornaEscolha ()
@@ -129,15 +164,23 @@ int main()
 
     arqCSV.close();
 
-    int opc;
+    int opc; // varável do switch
+
     // MENU DE OPÇÕES COM CHAMADA DA FUNÇÃO printMenu ();
     do
     {
         printMenu();
+          /*[0] - Encerrar programa
+            [1] - Ordenar arquivo
+            [2] - Remover universidade
+            [3] - Adicionar universidade
+            [4] - Buscar
+            [5] - Imprimir cadastros
+            [6] - Converter binário para csv*/
         cin >> opc;
         cout << "----------------------------\n" ;
 
-        fstream arqBinOrd;
+        int opt = 0; //  variável que receberá o retorno da função  retornaEscolha();
 
         switch (opc)
         {
@@ -145,31 +188,41 @@ int main()
                 break;
             case 1:
                 
-                arqBinOrd.open ("rankToBi.bin", ios::in | ios::binary | ios::ate);
-                cout << "FIZ A FUNÇÃO!\n";
+                newArqBi.open ("rankToBi.bin", ios::in | ios::binary | ios::ate);
+                ordenacao(newArqBi);
                 break;
+
             case 2:
                 cout << "FIZ A FUNÇÃO!\n";
                 break;
+
             case 3:
                 cout << "FIZ A FUNÇÃO!\n";
                 break;
+
             case 4:
-                cout << "[1] - Buscar por cidade\n[2] - Busca por país\n> ";
-                if (retornaEscolha() == 1)
+                newArqBi.open ("rankToBi.bin", ios::in | ios::binary | ios::ate);
+                cout << "[1] - Buscar por cidade\n[2] - Busca por país\nOu pressione qualquer número para voltar ao menu anterior\n> ";
+                opt = retornaEscolha();
+                if (opt == 1)
                 {
                     buscarPorCidade(newArqBi);
                     break;
                 }
-                else if (retornaEscolha() == 2)
+                else if (opt == 2)
                 {
-                    //buscarPorPais(newArqBi);
+                    buscarPorPais(newArqBi);
                     break;
                 }
-                else                
+                else 
                     break;
+
             case 5:
                 cout << "FIZ A FUNÇÃO\n!";
+                break;
+            
+            case 6:
+                //função converte binario para csv
                 break;
             default:
                 cout << "DIGITE UMA OPÇÃO VÁLIDA !\n";
@@ -177,7 +230,7 @@ int main()
     } while (opc != 0);
 
     
-    ordenacao(newArqBi);
+    
     
     
 
