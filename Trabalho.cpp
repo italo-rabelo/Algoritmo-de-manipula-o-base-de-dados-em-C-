@@ -19,6 +19,7 @@ struct Dados
     float pontuacao;
     char cidade[200]; //
     char pais[200];   //
+    int valido = 1;
 };
 
 Dados convertVetor(string vetor[])
