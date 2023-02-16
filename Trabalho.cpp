@@ -3,7 +3,7 @@
 #include <string>
 #include <cstring>
 #include <sstream>
-#include <windows.h>
+//#include <windows.h>
 // Participantes > Bernardo Bertante Martins, Esther Silva Magalhaes, Ítalo Alves Rabelo
 
 // Ano,Nome,Pontuacao,Cidade,País
@@ -44,10 +44,10 @@ void printMenu() // Subprograma no qual sempre orientrá o usuário em relação
     cout << "[3] - Adicionar universidade\n";
     cout << "[4] - Buscar\n";
     cout << "[5] - Imprimir cadastros\n";
-    cout << "[6] - Converter binário para CSV\n";
+    cout << "[6] - Converter binario para CSV\n";
     cout << "[7] - Ver Universidades cadastradas\n"
          << endl;
-    cout << "\nEscolha uma opção! > ";
+    cout << "\nEscolha uma opcao > ";
 }
 
 void intercala(Dados *a, int inicio, int meio, int fim, int aux_opcao) {
@@ -146,7 +146,7 @@ void ordenacao(fstream &newArqBi,int aux_opcao) // Subprograma no qual permite a
 			// ordena por pontuação
 			break;
 		default:
-			cout << "OPÇÃO INVÁLIDA!\n";
+			cout << "OPÇÃO INVALIDA!\n";
 			break;
     }
     //mostrar na tela a ordenação
@@ -161,7 +161,7 @@ void ordenacao(fstream &newArqBi,int aux_opcao) // Subprograma no qual permite a
 		newArqBi.write(reinterpret_cast<char*>(&vet[i]), sizeof(vet[i]));
 	}
 	
-	cout << "\nOrdenação concluída!" << endl;
+	cout << "\nOrdenacao concluida!" << endl;
 	
 	/*
 	if(opcaoOrd != 1 and opcaoOrd != 2){
@@ -233,7 +233,7 @@ void cadastrarUniv(Dados dados) // Subprograma no qual permite o usuário adicio
         break;
 
     default:
-        cout << "Opação Inválida";
+        cout << "Opacao Invalida";
         break;
     }
 
@@ -247,27 +247,35 @@ void buscarPorCidade(fstream &newArqBi) // Subprograma que tem a função de faz
     int quantUni = int(tamArq / sizeof(Dados));
     Dados vet[quantUni];
 
-    // LOOP PARA REALIZAR A LEITURA DO VETOR DE STRUCT A PARTIR DO ARQUIVO BINÁRIO
-    for (int i = 0; i < quantUni; i++)
-    {
-        newArqBi.seekg(0, newArqBi.beg);
-        newArqBi.seekg(i * sizeof(Dados));
-        newArqBi.read((char *)&vet[i], sizeof(Dados));
-        // cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " "  << vet[i].pais << endl;
-    }
-
-    cout << "Digite o nome da cidade > ";
+    cout << "\nDigite o nome da cidade > ";
     cin.clear();
     cin.ignore();
-    string cidade;
-    getline(cin, cidade);
+    char cidade[25];
+    cin.getline(cidade, 25);
     cout << endl;
-    for (int i = 0; i < quantUni; i++)
+
+    int cont = 0;
+    int aux = 0; // CONTADOR DE UNIVERSIDADES COM A MESMA CIDADE DA BUSCA
+    Dados universidade;
+    newArqBi.seekg(0, newArqBi.beg);
+
+
+    // REALIZA A BUSCA NO ARQUIVO BINÁRIO
+    while (cont < quantUni)
     {
-        if (vet[i].cidade == cidade)
-            cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " " << vet[i].pais << endl;
+        newArqBi.seekg (cont * sizeof (Dados));
+        newArqBi.read ((char*) &universidade, sizeof (Dados));
+        if (strcmp (cidade, universidade.cidade) == 0)
+        {
+            cout << universidade.ano << "  " << universidade.nome << "  " << universidade.pontuacao << "  " << universidade.cidade << "  " << universidade.pais << endl;
+            aux++;
+        }
+        cont++;
     }
-    cout << endl;
+
+    if (aux == 0)
+        cout << "Não ha universidades cadastradas nesta cidade !\n";
+
     newArqBi.close();
 }
 
@@ -276,30 +284,36 @@ void buscarPorPais(fstream &newArqBi) // Subprograma que tem a função de fazer
     // OPERAÇÕES PARA CALCULAR A QUANTIDADE DE REGISTROS PRESENTES NO ARQUIVO BINÁRIO
     long int tamArq = newArqBi.tellg();
     int quantUni = int(tamArq / sizeof(Dados));
-    Dados vet[quantUni];
 
-    // LOOP PARA REALIZAR A LEITURA DO VETOR DE STRUCT A PARTIR DO ARQUIVO BINÁRIO
-    for (int i = 0; i < quantUni; i++)
-    {
-        newArqBi.seekg(0, newArqBi.beg);
-        newArqBi.seekg(i * sizeof(Dados));
-        newArqBi.read((char *)&vet[i], sizeof(Dados));
-        // cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " "  << vet[i].pais << endl;
-    }
-
-    cout << "Digite o nome do país > ";
+    cout << "\nDigite o nome do país > ";
     cin.clear();
     cin.ignore();
-    string pais;
-    getline(cin, pais);
-    // cin.ignore();
+    char pais[25];
+    cin.getline(pais, 25);
     cout << endl;
-    for (int i = 0; i < quantUni; i++)
+
+    int cont = 0;
+    int aux = 0; // CONTADOR DE UNIVERSIDADES COM A MESMA CIDADE DA BUSCA
+    Dados universidade;
+    newArqBi.seekg(0, newArqBi.beg);
+
+
+    // REALIZA A BUSCA NO ARQUIVO BINÁRIO
+    while (cont < quantUni)
     {
-        if (vet[i].pais == pais)
-            cout << vet[i].ano << " " << vet[i].nome << " " << vet[i].pontuacao << " " << vet[i].cidade << " " << vet[i].pais << endl;
+        newArqBi.seekg (cont * sizeof (Dados));
+        newArqBi.read ((char*) &universidade, sizeof (Dados));
+        if (strcmp (pais, universidade.pais) == 0)
+        {
+            cout << universidade.ano << "  " << universidade.nome << "  " << universidade.pontuacao << "  " << universidade.cidade << "  " << universidade.pais << endl;
+            aux++;
+        }
+        cont++;
     }
-    cout << endl;
+    
+    if (aux == 0)
+        cout << "Não ha universidades cadastradas neste pais !\n";
+
     newArqBi.close();
 }
 
@@ -349,7 +363,7 @@ int main()
 
     // Aqui começa a conversão dos dados do arquivo .csv para o arquivo binário;
 
-	SetConsoleOutputCP(CP_UTF8); 
+	//SetConsoleOutputCP(CP_UTF8); 
     ifstream arqCSV("rankUniversidades.csv");
     fstream newArqBi;
     newArqBi.open("rankToBi.bin", ios::binary | ios::out | ios::in);
