@@ -3,22 +3,23 @@
 #include <string>
 #include <cstring>
 #include <sstream>
-//#include <windows.h>
-// Participantes > Bernardo Bertante Martins, Esther Silva Magalhaes, Ítalo Alves Rabelo
+#include <windows.h>
+//  Participantes > Bernardo Bertante Martins, Esther Silva Magalhaes, Ítalo Alves Rabelo
 
-// Ano,Nome,Pontuacao,Cidade,País
+// Ano;Nome;Pontuacao;Cidade;País
 
-// Ordenação por Cidade e por País
+// Ordenação por Ano e por Pontuação
+// Busca por Cidade e por País
 
 using namespace std;
 
 struct Dados // Struct na qual os dados do arquivo seguirão com o seu padrão (int, char, float, char, char, int);
 {
     int ano;
-    char nome[200]; // 1 ponto
+    char nome[200];
     float pontuacao;
-    char cidade[200]; //
-    char pais[200];   //
+    char cidade[200];
+    char pais[200];
     int valido = 1;
 };
 
@@ -40,88 +41,110 @@ void printMenu() // Subprograma no qual sempre orientrá o usuário em relação
          << endl;
     cout << "[0] - Encerrar programa\n";
     cout << "[1] - Ordenar arquivo\n";
-    cout << "[2] - Remover universidade\n";
-    cout << "[3] - Adicionar universidade\n";
+    cout << "[2] - Remover Universidade\n";
+    cout << "[3] - Adicionar Universidade\n";
     cout << "[4] - Buscar\n";
-    cout << "[5] - Imprimir cadastros\n";
-    cout << "[6] - Converter binario para CSV\n";
-    cout << "[7] - Ver Universidades cadastradas\n"
+    cout << "[5] - Imprimir Universidades cadastradas\n";
+    cout << "[6] - Converter binário para CSV\n";
+    cout << "[7] - Imprimir um intervalo de Universidades\n"
          << endl;
-    cout << "\nEscolha uma opcao > ";
+    cout << "\nEscolha uma opção! > ";
 }
 
-void intercala(Dados *a, int inicio, int meio, int fim, int aux_opcao) {
-	int i = inicio, j = meio + 1;
-	int tamanho = fim - inicio + 1;
-	Dados *aux = new Dados[tamanho]; // vetor auxiliar
-	if(aux_opcao == 1){
-		for (int k=0; k < tamanho; k++) {//ano
-			if ((i <= meio) and (j <= fim)){ 
-				if (a[i].ano >= a[j].ano){ 
-					aux[k] = a[i]; // copia trecho1 em aux[]
-					i++; 			// avança em trecho1
-				} else { // 
-					aux[k] = a[j]; // copia trecho2 em aux[]
-					j++;	 		// avanca em trecho2
-				}	
-			} 
-			else if (i > meio) { // terminou o trecho1	
-				aux[k] = a[j];
-				j++;
-			} else { 				 // terminou o trecho2
-				aux[k] = a[i];
-				i++;
-			}		
-		}	
-		// terminando: copiar de aux[] em a[inicio:fim]
-		for (int k=0; k < tamanho; k++){ 
-			a[inicio + k] = aux[k];
-		}
-	}
-	else if(aux_opcao == 2){//pontuacao
-		for (int k=0; k < tamanho; k++) {
-			if ((i <= meio) and (j <= fim)){ 
-				if (a[i].pontuacao >= a[j].pontuacao){ 
-					aux[k] = a[i]; // copia trecho1 em aux[]
-					i++; 			// avança em trecho1
-				} else { // 
-					aux[k] = a[j]; // copia trecho2 em aux[]
-					j++;	 		// avanca em trecho2
-				}	
-			} 
-			else if (i > meio) { // terminou o trecho1	
-				aux[k] = a[j];
-				j++;
-			} else { 				 // terminou o trecho2
-				aux[k] = a[i];
-				i++;
-			}		
-		}	
-		// terminando: copiar de aux[] em a[inicio:fim]
-		for (int k=0; k < tamanho; k++){ 
-			a[inicio + k] = aux[k];
-		}
-	}
+void intercala(Dados *a, int inicio, int meio, int fim, int aux_opcao) // Subprograma que funciona em conjunta com o Subprograma mergesort(); O objetivo de ambos é ordenar Ano e Pontuação;
+{
+    int i = inicio, j = meio + 1;
+    int tamanho = fim - inicio + 1;
+    Dados *aux = new Dados[tamanho]; // vetor auxiliar
+    if (aux_opcao == 1)
+    {
+        for (int k = 0; k < tamanho; k++)
+        { // ano
+            if ((i <= meio) and (j <= fim))
+            {
+                if (a[i].ano >= a[j].ano)
+                {
+                    aux[k] = a[i]; // copia trecho1 em aux[]
+                    i++;           // avança em trecho1
+                }
+                else
+                {                  //
+                    aux[k] = a[j]; // copia trecho2 em aux[]
+                    j++;           // avanca em trecho2
+                }
+            }
+            else if (i > meio)
+            { // terminou o trecho1
+                aux[k] = a[j];
+                j++;
+            }
+            else
+            { // terminou o trecho2
+                aux[k] = a[i];
+                i++;
+            }
+        }
+        // terminando: copiar de aux[] em a[inicio:fim]
+        for (int k = 0; k < tamanho; k++)
+        {
+            a[inicio + k] = aux[k];
+        }
+    }
+    else if (aux_opcao == 2)
+    { // pontuacao
+        for (int k = 0; k < tamanho; k++)
+        {
+            if ((i <= meio) and (j <= fim))
+            {
+                if (a[i].pontuacao >= a[j].pontuacao)
+                {
+                    aux[k] = a[i]; // copia trecho1 em aux[]
+                    i++;           // avança em trecho1
+                }
+                else
+                {                  //
+                    aux[k] = a[j]; // copia trecho2 em aux[]
+                    j++;           // avanca em trecho2
+                }
+            }
+            else if (i > meio)
+            { // terminou o trecho1
+                aux[k] = a[j];
+                j++;
+            }
+            else
+            { // terminou o trecho2
+                aux[k] = a[i];
+                i++;
+            }
+        }
+        // terminando: copiar de aux[] em a[inicio:fim]
+        for (int k = 0; k < tamanho; k++)
+        {
+            a[inicio + k] = aux[k];
+        }
+    }
 }
 
-
-void mergesort(Dados *a, int inicio, int fim, int escolha){
-	int meio;
-	if (inicio < fim) {
-		meio = (inicio + fim)/2; 
-		mergesort(a, inicio, meio,escolha);
-		mergesort(a, meio+1, fim,escolha);
-		intercala(a, inicio, meio, fim, escolha);
-	}
+void mergesort(Dados *a, int inicio, int fim, int escolha) // Subprograma que ordena as Universidades por Ano e por Pontuação;
+{
+    int meio;
+    if (inicio < fim)
+    {
+        meio = (inicio + fim) / 2;
+        mergesort(a, inicio, meio, escolha);
+        mergesort(a, meio + 1, fim, escolha);
+        intercala(a, inicio, meio, fim, escolha);
+    }
 }
 
-void ordenacao(fstream &newArqBi,int aux_opcao) // Subprograma no qual permite a ordenação dos dados contidos no arquivo binário, isso por meio de um vetor auxiliar no qual reescreve os dados já ordenados novamente no arquivo binário;
+void ordenacao(fstream &newArqBi, int aux_opcao) // Subprograma no qual permite a ordenação dos dados contidos no arquivo binário, isso por meio de um vetor auxiliar no qual reescreve os dados já ordenados novamente no arquivo binário;
 {
     // OPERAÇÕES PARA CALCULAR A QUANTIDADE DE REGISTROS PRESENTES NO ARQUIVO BINÁRIO
     long int tamArq = newArqBi.tellg();
     int quantUni = int(tamArq / sizeof(Dados));
     Dados *vet = new Dados[quantUni];
-    //cout << "\nQUANTI UNI = " << quantUni << endl;
+    // cout << "\nQUANTI UNI = " << quantUni << endl;
 
     // LOOP PARA REALIZAR A LEITURA DO VETOR DE STRUCT A PARTIR DO ARQUIVO BINÁRIO
     for (int i = 0; i < quantUni; i++)
@@ -137,37 +160,32 @@ void ordenacao(fstream &newArqBi,int aux_opcao) // Subprograma no qual permite a
     // ORDENAÇÃO POR ANO(1) E POR PONTUAÇÃO(2)
     switch (aux_opcao)
     {
-		case 1:
-			mergesort(vet, 0, quantUni - 1, aux_opcao);
-			// ordena por ano
-			break;
-		case 2:
-			mergesort(vet, 0, quantUni - 1, aux_opcao);
-			// ordena por pontuação
-			break;
-		default:
-			cout << "OPÇÃO INVALIDA!\n";
-			break;
+    case 1:
+        mergesort(vet, 0, quantUni - 1, aux_opcao);
+        // ordena por ano
+        break;
+    case 2:
+        mergesort(vet, 0, quantUni - 1, aux_opcao);
+        // ordena por pontuação
+        break;
+    default:
+        cout << "OPÇÃO INVÁLIDA!\n";
+        break;
     }
-    //mostrar na tela a ordenação
+    // mostrar na tela a ordenação
     /*for(int i=0; i < quantUni; ++i){
-		cout << vet[i].ano << " " << vet[i].nome << " " <<vet[i].pontuacao << " " << vet[i].cidade << " " << vet[i].pais << endl;
-	}
-	*/
-	newArqBi.open("rankToBi.bin", ios::trunc | ios::out);
-	
-	for(int i=0; i < quantUni; ++i){
-		newArqBi.seekg(i * sizeof(Dados));
-		newArqBi.write(reinterpret_cast<char*>(&vet[i]), sizeof(vet[i]));
-	}
-	
-	cout << "\nOrdenacao concluida!" << endl;
-	
-	/*
-	if(opcaoOrd != 1 and opcaoOrd != 2){
-		cout << "Opção de ordenação inválida" << endl;
-	} 
-	*/
+        cout << vet[i].ano << " " << vet[i].nome << " " <<vet[i].pontuacao << " " << vet[i].cidade << " " << vet[i].pais << endl;
+    }
+    */
+    newArqBi.open("rankToBi.bin", ios::trunc | ios::out);
+
+    for (int i = 0; i < quantUni; ++i)
+    {
+        newArqBi.seekg(i * sizeof(Dados));
+        newArqBi.write((char *)&vet[i], sizeof(vet[i]));
+    }
+
+    cout << "\nOrdenação concluída!" << endl;
 }
 
 void cadastrarUniv(Dados dados) // Subprograma no qual permite o usuário adicionar 1 ou Mais Universidades ao arquivo binário quando chamado;
@@ -181,8 +199,8 @@ void cadastrarUniv(Dados dados) // Subprograma no qual permite o usuário adicio
     cin >> opc;
     cout << endl;
 
-    ofstream novoCadastro;
-    novoCadastro.open("rankToBi.bin", ios::binary | ios::out | ios::app);
+    fstream novoCadastro;
+    novoCadastro.open("rankToBi.bin", ios::binary | ios::out | ios::in | ios::app);
 
     switch (opc)
     {
@@ -233,9 +251,17 @@ void cadastrarUniv(Dados dados) // Subprograma no qual permite o usuário adicio
         break;
 
     default:
-        cout << "Opacao Invalida";
+        cout << "Opação Inválida";
         break;
     }
+
+    cout << "Como deseja ordenar as Faculdades que cadastrou?" << endl
+         << endl
+         << "[1] - Por Ano" << endl
+         << "[2] - Por Pontuação" << endl;
+    cin >> opc;
+
+    ordenacao(novoCadastro, opc);
 
     novoCadastro.close();
 }
@@ -259,22 +285,24 @@ void buscarPorCidade(fstream &newArqBi) // Subprograma que tem a função de faz
     Dados universidade;
     newArqBi.seekg(0, newArqBi.beg);
 
-
     // REALIZA A BUSCA NO ARQUIVO BINÁRIO
     while (cont < quantUni)
     {
-        newArqBi.seekg (cont * sizeof (Dados));
-        newArqBi.read ((char*) &universidade, sizeof (Dados));
-        if (strcmp (cidade, universidade.cidade) == 0)
+        newArqBi.seekg(cont * sizeof(Dados));
+        newArqBi.read((char *)&universidade, sizeof(Dados));
+        if (strcmp(cidade, universidade.cidade) == 0)
         {
-            cout << universidade.ano << "  " << universidade.nome << "  " << universidade.pontuacao << "  " << universidade.cidade << "  " << universidade.pais << endl;
-            aux++;
+            if (universidade.valido == 1)
+            {
+                cout << universidade.ano << "  " << universidade.nome << "  " << universidade.pontuacao << "  " << universidade.cidade << "  " << universidade.pais << endl;
+                aux++; //
+            }
         }
         cont++;
     }
 
     if (aux == 0)
-        cout << "Não ha universidades cadastradas nesta cidade !\n";
+        cout << "Não ha universidades cadastradas nesta cidade!\n";
 
     newArqBi.close();
 }
@@ -297,22 +325,24 @@ void buscarPorPais(fstream &newArqBi) // Subprograma que tem a função de fazer
     Dados universidade;
     newArqBi.seekg(0, newArqBi.beg);
 
-
     // REALIZA A BUSCA NO ARQUIVO BINÁRIO
     while (cont < quantUni)
     {
-        newArqBi.seekg (cont * sizeof (Dados));
-        newArqBi.read ((char*) &universidade, sizeof (Dados));
-        if (strcmp (pais, universidade.pais) == 0)
+        newArqBi.seekg(cont * sizeof(Dados));
+        newArqBi.read((char *)&universidade, sizeof(Dados));
+        if (strcmp(pais, universidade.pais) == 0)
         {
-            cout << universidade.ano << "  " << universidade.nome << "  " << universidade.pontuacao << "  " << universidade.cidade << "  " << universidade.pais << endl;
-            aux++;
+            if (universidade.valido == 1)
+            {
+                cout << universidade.ano << "  " << universidade.nome << "  " << universidade.pontuacao << "  " << universidade.cidade << "  " << universidade.pais << endl;
+                aux++; //
+            }
         }
         cont++;
     }
-    
+
     if (aux == 0)
-        cout << "Não ha universidades cadastradas neste pais !\n";
+        cout << "Não ha universidades cadastradas neste pais!\n";
 
     newArqBi.close();
 }
@@ -330,7 +360,10 @@ void printUniversidades(Dados dados) // Subprograma que exibe/printa no terminal
     arqBi.open("rankToBi.bin", ios::binary | ios::in);
     while (arqBi.read((char *)&dados, sizeof(Dados)))
     {
-        cout << dados.ano << " " << dados.nome << " " << dados.pontuacao << " " << dados.cidade << " " << dados.pais << endl;
+        if (dados.valido == 1)
+        {
+            cout << dados.ano << " " << dados.nome << " " << dados.pontuacao << " " << dados.cidade << " " << dados.pais << endl;
+        }
     }
     arqBi.close();
 }
@@ -349,7 +382,7 @@ void exportarCSV(fstream &arqBi) // Subprograma na qual sua função é de conve
         arqBi.seekg(cont * sizeof(Dados));
         arqBi.read((char *)&universidade, sizeof(Dados));
 
-        // if (universidade.valido != 0)
+        if (universidade.valido != 0)
         {
             arqCSV << universidade.ano << ";" << universidade.nome << ";" << universidade.pontuacao << ";" << universidade.cidade << ";" << universidade.pais << endl;
         }
@@ -358,12 +391,44 @@ void exportarCSV(fstream &arqBi) // Subprograma na qual sua função é de conve
     }
 }
 
+void imprimeGap(fstream &arqBi)
+{
+    cout << "Escolha o GAP que quer imprimir no Arquivo: " << endl
+         << endl;
+    Dados universidade;
+    int gapInicio, gapFim;
+    cin >> gapInicio >> gapFim;
+    cin.ignore();
+    long int tamArq = arqBi.tellg();
+    int quantUniv = int((tamArq / sizeof(Dados)));
+
+    if ((gapInicio > 0) and (gapInicio < quantUniv) and (gapFim > 0) and (gapFim < quantUniv))
+    {
+        cout << endl
+             << "Universidades Cadastradas e Ativas entre as linhas " << gapInicio << " - " << gapFim << ":" << endl
+             << endl;
+        while (gapInicio <= gapFim)
+        {
+            arqBi.seekg((gapInicio - 1) * sizeof(Dados)); //
+            arqBi.read((char *)&universidade, sizeof(Dados));
+            if (universidade.valido == 1)
+            {
+                cout << universidade.ano << " " << universidade.nome << " " << universidade.pontuacao << " " << universidade.cidade << " " << universidade.pais << endl;
+            }
+            gapInicio++;
+        }
+    }
+    else
+        cout << "Intervalo inválido!\n";
+    arqBi.close();
+}
+
 int main()
 {
 
     // Aqui começa a conversão dos dados do arquivo .csv para o arquivo binário;
 
-	//SetConsoleOutputCP(CP_UTF8); 
+    SetConsoleOutputCP(CP_UTF8);
     ifstream arqCSV("rankUniversidades.csv");
     fstream newArqBi;
     newArqBi.open("rankToBi.bin", ios::binary | ios::out | ios::in);
@@ -377,12 +442,12 @@ int main()
         stringstream linha(aux);
         for (int i = 0; i < 5; i++)
         {
-            getline(linha, coluna, ',');
+            getline(linha, coluna, ';');
             vetor[i] = coluna;
         }
 
         dados = convertVetor(vetor); // Até então todos os dados se encontram como string, porém a partir de agora são convertidos para seus devidos tipos por meio desse subprograma;
-        newArqBi.write(reinterpret_cast<char *>(&dados), sizeof(Dados));
+        newArqBi.write((char *)&dados, sizeof(Dados));
     }
     newArqBi.close();
 
@@ -390,22 +455,25 @@ int main()
 
     arqCSV.close();
 
-    printUniversidades(dados); // Os dados iniciais na abetura atual do programa são mostrados logo de cara para o usuáio, para que o mesmo tenha noção do estado corrente do arquivo binário;
+    printUniversidades(dados); // Mostra as Faculdades já cadastradas assim que o programa é inicializado;
+
+    // Os dados iniciais na abetura atual do programa são mostrados logo de cara para o usuáio, para que o mesmo tenha noção do estado corrente do arquivo binário;
 
     int opc; // varável do switch
 
-    // MENU DE OPÇÕES COM CHAMADA DA FUNÇÃO printMenu ();
+    // MENU DE OPÇÕES COM CHAMADA DA FUNÇÃO printMenu();
     do
     {
+        // printUniversidades(dados);
         printMenu();
         /*[0] - Encerrar programa
           [1] - Ordenar arquivo
           [2] - Remover universidade
           [3] - Adicionar universidade
           [4] - Buscar
-          [5] - Imprimir cadastros
+          [5] - Imprimir Universidades cadastradas
           [6] - Converter Binário para CSV
-          [7] - Ver Universidades
+          [7] - Imprimir um intervalo de Universidades
           */
         cin >> opc;
         cout << "----------------------------\n";
@@ -418,12 +486,13 @@ int main()
             break;
         case 1:
             int opcao;
-            newArqBi.open ("rankToBi.bin", ios::in | ios::binary | ios::ate);
-            cout << "Escolha como o arquivo será ordenado:\n";
-			cout << "[1] - Por Ano\n"
+            newArqBi.open("rankToBi.bin", ios::in | ios::binary | ios::ate);
+            cout << "Escolha como o arquivo será ordenado:\n"
+                 << endl;
+            cout << "[1] - Por Ano\n"
                  << "[2] - Por Pontuação\n";
             cin >> opcao;
-            ordenacao(newArqBi,opcao);
+            ordenacao(newArqBi, opcao);
             newArqBi.close();
             break;
 
@@ -455,19 +524,22 @@ int main()
                 break;
 
         case 5:
-            cout << "FIZ A FUNÇÃO\n!";
+            cout << "Universidades Cadastradas e Ativas:" << endl
+                 << endl;
+            printUniversidades(dados);
             break;
 
         case 6:
-            cout << "Arquivo CSV exportado.";
-            newArqBi.open("rankToBi.bin", ios::binary | ios::in | ios::out);
+            cout << endl
+                 << "Arquivo CSV exportado!" << endl;
+            newArqBi.open("rankToBi.bin", ios::binary | ios::in | ios::out | ios::ate);
             exportarCSV(newArqBi);
             newArqBi.close();
             break;
         case 7:
-            cout << "Universidades Cadastradas e Ativas:" << endl
-                 << endl;
-            printUniversidades(dados);
+            newArqBi.open("rankToBi.bin", ios::binary | ios::in | ios::out | ios::ate);
+            imprimeGap(newArqBi);
+            newArqBi.close();
             break;
         default:
             cout << "DIGITE UMA OPÇÃO VÁLIDA !\n";
