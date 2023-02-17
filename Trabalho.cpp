@@ -23,6 +23,37 @@ struct Dados // Struct na qual os dados do arquivo seguirão com o seu padrão (
     int valido = 1;
 };
 
+void excluirUniversidade(fstream &newArqBi)
+{
+
+	newArqBi.seekg(0,ios::end);
+    int quantUni = newArqBi.tellg()/sizeof(Dados);
+    Dados universidade;
+	cout<<quantUni << endl;
+	
+    cout << "\nDigite a posicao da universidade a ser excluida (0 - " << quantUni - 1 << ")\n> ";
+    int posicao;
+    cin >> posicao;
+
+
+    newArqBi.seekg(0, newArqBi.beg); // POSICIONA O PONTEIRO DE LEITURA NO INÍCIO DO ARQUIVO 
+    int cont = 0; // CONTADOR DO LOOP
+    if (posicao >= 0 and posicao < quantUni)
+    {
+        newArqBi.seekg (cont * sizeof (Dados));
+        newArqBi.read ((char*) &universidade, sizeof (Dados));
+        cout<<universidade.nome <<endl;
+        // FAZ A CONVERSÃO DA VARIÁVEL 'VALIDO' PARA 0 E ESCREVE NOVAMENTE O REGISTRO NO ARQUIVO
+        universidade.valido = 0;
+        newArqBi.seekp (cont * sizeof (Dados));
+        newArqBi.write ((char*) &universidade, sizeof (Dados));
+    }
+    else 
+        cout << "\nNão há universidade nesta posicao !\n";
+    
+    newArqBi.close();
+}
+
 Dados convertVetor(string vetor[]) // Subprograma no qual trabalha em conjunto com as primeiras linhas da função main(); Converte as Strings provenientes do arquivo .csv para int, char e float;
 {
     Dados dados; //
@@ -271,7 +302,6 @@ void buscarPorCidade(fstream &newArqBi) // Subprograma que tem a função de faz
     // OPERAÇÕES PARA CALCULAR A QUANTIDADE DE REGISTROS PRESENTES NO ARQUIVO BINÁRIO
     long int tamArq = newArqBi.tellg();
     int quantUni = int(tamArq / sizeof(Dados));
-    Dados vet[quantUni];
 
     cout << "\nDigite o nome da cidade > ";
     cin.clear();
@@ -362,7 +392,7 @@ void printUniversidades(Dados dados) // Subprograma que exibe/printa no terminal
     {
         if (dados.valido == 1)
         {
-            cout << dados.ano << " " << dados.nome << " " << dados.pontuacao << " " << dados.cidade << " " << dados.pais << endl;
+            cout << dados.ano << " " << dados.nome << " " << dados.pontuacao << " " << dados.cidade << " " << dados.pais << " " << dados.valido << endl;
         }
     }
     arqBi.close();
@@ -497,7 +527,9 @@ int main()
             break;
 
         case 2:
-            cout << "FIZ A FUNÇÃO\n!" << endl;
+			newArqBi.open("rankToBi.bin", ios::in | ios::binary | ios::out);
+            excluirUniversidade(newArqBi);
+            newArqBi.close();
             break;
 
         case 3:
