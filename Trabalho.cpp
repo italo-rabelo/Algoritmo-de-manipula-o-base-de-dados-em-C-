@@ -194,7 +194,7 @@ void excluirUniversidade(fstream &newArqBi)
 
 
     newArqBi.seekg(0, newArqBi.beg); // POSICIONA O PONTEIRO DE LEITURA NO INÍCIO DO ARQUIVO 
-    int cont = 0; // CONTADOR DO LOOP
+    int cont = posicao; // CONTADOR DO LOOP
     if (posicao >= 0 and posicao < quantUni)
     {
         newArqBi.seekg (cont * sizeof (Dados));
