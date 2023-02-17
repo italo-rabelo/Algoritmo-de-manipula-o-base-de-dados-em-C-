@@ -4,7 +4,7 @@
 #include <cstring>
 #include <sstream>
 #include <windows.h>
-//  Participantes > Bernardo Bertante Martins, Esther Silva Magalhaes, Ítalo Alves Rabelo
+// Participantes > Bernardo Bertante Martins, Esther Silva Magalhaes, Ítalo Alves Rabelo
 
 // Ano;Nome;Pontuacao;Cidade;País
 
@@ -111,7 +111,7 @@ int main()
             break;
 
         case 2:
-			newArqBi.open("rankToBi.bin", ios::in | ios::binary | ios::out);
+            newArqBi.open("rankToBi.bin", ios::in | ios::binary | ios::out);
             excluirUniversidade(newArqBi);
             newArqBi.close();
             break;
@@ -175,7 +175,7 @@ void printMenu() // Subprograma no qual sempre orientrá o usuário em relação
     cout << "[3] - Adicionar Universidade\n";
     cout << "[4] - Buscar\n";
     cout << "[5] - Imprimir Universidades cadastradas\n";
-    cout << "[6] - Converter binário para CSV\n";
+    cout << "[6] - Exportar para CSV\n";
     cout << "[7] - Imprimir um intervalo de Universidades\n"
          << endl;
     cout << "\nEscolha uma opção! > ";
@@ -184,30 +184,36 @@ void printMenu() // Subprograma no qual sempre orientrá o usuário em relação
 void excluirUniversidade(fstream &newArqBi)
 {
 
-	newArqBi.seekg(0,ios::end);
-    int quantUni = newArqBi.tellg()/sizeof(Dados);
+    newArqBi.seekg(0, ios::end);
+    int quantUni = newArqBi.tellg() / sizeof(Dados);
     Dados universidade;
-	
-    cout << "\nDigite a posicao da universidade a ser excluida (0 - " << quantUni - 1 << ")\n> ";
+
+    cout << "\nDigite a posição da universidade a ser excluida (0 - " << quantUni - 1 << ")\n> ";
     int posicao;
     cin >> posicao;
 
-
-    newArqBi.seekg(0, newArqBi.beg); // POSICIONA O PONTEIRO DE LEITURA NO INÍCIO DO ARQUIVO 
-    int cont = posicao; // CONTADOR DO LOOP
+    newArqBi.seekg(0, newArqBi.beg); // POSICIONA O PONTEIRO DE LEITURA NO INÍCIO DO ARQUIVO
+    int cont = posicao;              // CONTADOR DO LOOP
     if (posicao >= 0 and posicao < quantUni)
     {
-        newArqBi.seekg (cont * sizeof (Dados));
-        newArqBi.read ((char*) &universidade, sizeof (Dados));
-        cout<<universidade.nome <<endl;
-        // FAZ A CONVERSÃO DA VARIÁVEL 'VALIDO' PARA 0 E ESCREVE NOVAMENTE O REGISTRO NO ARQUIVO
-        universidade.valido = 0;
-        newArqBi.seekp (cont * sizeof (Dados));
-        newArqBi.write ((char*) &universidade, sizeof (Dados));
+        newArqBi.seekg(cont * sizeof(Dados));
+        newArqBi.read((char *)&universidade, sizeof(Dados));
+        if (universidade.valido == 1)
+        {
+            cout << universidade.nome << endl;
+            // FAZ A CONVERSÃO DA VARIÁVEL 'VALIDO' PARA 0 E ESCREVE NOVAMENTE O REGISTRO NO ARQUIVO
+            universidade.valido = 0;
+            newArqBi.seekp(cont * sizeof(Dados));
+            newArqBi.write((char *)&universidade, sizeof(Dados));
+        }
+        else
+            cout << endl
+                 << "Universidade já excluida!" << endl
+                 << endl;
     }
-    else 
+    else
         cout << "\nNão há universidade nesta posicao !\n";
-    
+
     newArqBi.close();
 }
 
@@ -593,4 +599,3 @@ void imprimeGap(fstream &arqBi)
         cout << "Intervalo inválido!\n";
     arqBi.close();
 }
-
