@@ -183,18 +183,18 @@ void printMenu() // Subprograma no qual sempre orientrá o usuário em relação
 
 void excluirUniversidade(fstream &newArqBi)
 {
-
     newArqBi.seekg(0, ios::end);
     int quantUni = newArqBi.tellg() / sizeof(Dados);
     Dados universidade;
 
-    cout << "\nDigite a posição da universidade a ser excluida (0 - " << quantUni - 1 << ")\n> ";
+    cout << "\nDigite a posição da universidade a ser excluida (1 - " << quantUni << ")\n> ";
     int posicao;
     cin >> posicao;
 
+	bool verificacao = false;
     newArqBi.seekg(0, newArqBi.beg); // POSICIONA O PONTEIRO DE LEITURA NO INÍCIO DO ARQUIVO
-    int cont = posicao;              // CONTADOR DO LOOP
-    if (posicao >= 0 and posicao < quantUni)
+    int cont = posicao - 1;              // CONTADOR DO LOOP
+    if (posicao > 0 and posicao <= quantUni)
     {
         newArqBi.seekg(cont * sizeof(Dados));
         newArqBi.read((char *)&universidade, sizeof(Dados));
@@ -205,14 +205,15 @@ void excluirUniversidade(fstream &newArqBi)
             universidade.valido = 0;
             newArqBi.seekp(cont * sizeof(Dados));
             newArqBi.write((char *)&universidade, sizeof(Dados));
+            verificacao = true;
         }
-        else
+        else if(verificacao == false)
             cout << endl
                  << "Universidade já excluida!" << endl
                  << endl;
     }
     else
-        cout << "\nNão há universidade nesta posicao !\n";
+        cout << "\nNão há universidade nesta posicao!\n";
 
     newArqBi.close();
 }
@@ -362,8 +363,6 @@ void ordenacao(fstream &newArqBi, int aux_opcao) // Subprograma no qual permite 
         newArqBi.seekg(i * sizeof(Dados));
         newArqBi.write((char *)&vet[i], sizeof(vet[i]));
     }
-
-    cout << "\nOrdenação concluída!" << endl;
 }
 
 void cadastrarUniv(Dados dados) // Subprograma no qual permite o usuário adicionar 1 ou Mais Universidades ao arquivo binário quando chamado;
@@ -570,14 +569,15 @@ void exportarCSV(fstream &arqBi) // Subprograma na qual sua função é de conve
 
 void imprimeGap(fstream &arqBi)
 {
-    cout << "Escolha o GAP que quer imprimir no Arquivo: " << endl
+	long int tamArq = arqBi.tellg();
+    int quantUniv = int((tamArq / sizeof(Dados)));
+    
+    cout << "Escolha o GAP que você quer imprimir no Arquivo, de 1 a " << quantUniv << ':' << endl
          << endl;
     Dados universidade;
     int gapInicio, gapFim;
     cin >> gapInicio >> gapFim;
     cin.ignore();
-    long int tamArq = arqBi.tellg();
-    int quantUniv = int((tamArq / sizeof(Dados)));
 
     if ((gapInicio > 0) and (gapInicio < quantUniv) and (gapFim > 0) and (gapFim < quantUniv))
     {
@@ -591,8 +591,8 @@ void imprimeGap(fstream &arqBi)
             if (universidade.valido == 1)
             {
                 cout << universidade.ano << " " << universidade.nome << " " << universidade.pontuacao << " " << universidade.cidade << " " << universidade.pais << endl;
-            }
-            gapInicio++;
+			}
+			gapInicio++;
         }
     }
     else
