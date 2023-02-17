@@ -26,10 +26,9 @@ struct Dados // Struct na qual os dados do arquivo seguirão com o seu padrão (
 void excluirUniversidade(fstream &newArqBi)
 {
 
-	newArqBi.seekg(0,ios::end);
+    newArqBi.seekg(0,ios::end);
     int quantUni = newArqBi.tellg()/sizeof(Dados);
     Dados universidade;
-	cout<<quantUni << endl;
 	
     cout << "\nDigite a posicao da universidade a ser excluida (0 - " << quantUni - 1 << ")\n> ";
     int posicao;
