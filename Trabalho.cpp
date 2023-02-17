@@ -23,10 +23,168 @@ struct Dados // Struct na qual os dados do arquivo seguirão com o seu padrão (
     int valido = 1;
 };
 
+void printMenu();
+void excluirUniversidade(fstream &newArqBi);
+Dados convertVetor(string vetor[]);
+void intercala(Dados *a, int inicio, int meio, int fim, int aux_opcao);
+void mergesort(Dados *a, int inicio, int fim, int escolha);
+void ordenacao(fstream &newArqBi, int aux_opcao);
+void cadastrarUniv(Dados dados);
+void buscarPorCidade(fstream &newArqBi);
+void buscarPorPais(fstream &newArqBi);
+int retornaEscolha();
+void printUniversidades(Dados dados);
+void exportarCSV(fstream &arqBi);
+void imprimeGap(fstream &arqBi);
+
+int main()
+{
+
+    // Aqui começa a conversão dos dados do arquivo .csv para o arquivo binário;
+
+    SetConsoleOutputCP(CP_UTF8);
+    ifstream arqCSV("rankUniversidades.csv");
+    fstream newArqBi;
+    newArqBi.open("rankToBi.bin", ios::binary | ios::out | ios::in);
+    string vetor[5];
+    string coluna;
+    string aux;
+    Dados dados;
+
+    while (getline(arqCSV, aux))
+    {
+        stringstream linha(aux);
+        for (int i = 0; i < 5; i++)
+        {
+            getline(linha, coluna, ';');
+            vetor[i] = coluna;
+        }
+
+        dados = convertVetor(vetor); // Até então todos os dados se encontram como string, porém a partir de agora são convertidos para seus devidos tipos por meio desse subprograma;
+        newArqBi.write((char *)&dados, sizeof(Dados));
+    }
+    newArqBi.close();
+
+    cout << "Arquivo gerado com sucesso!" << endl;
+
+    arqCSV.close();
+
+    printUniversidades(dados); // Mostra as Faculdades já cadastradas assim que o programa é inicializado;
+
+    // Os dados iniciais na abetura atual do programa são mostrados logo de cara para o usuáio, para que o mesmo tenha noção do estado corrente do arquivo binário;
+
+    int opc; // varável do switch
+
+    // MENU DE OPÇÕES COM CHAMADA DA FUNÇÃO printMenu();
+    do
+    {
+        // printUniversidades(dados);
+        printMenu();
+        /*[0] - Encerrar programa
+          [1] - Ordenar arquivo
+          [2] - Remover universidade
+          [3] - Adicionar universidade
+          [4] - Buscar
+          [5] - Imprimir Universidades cadastradas
+          [6] - Converter Binário para CSV
+          [7] - Imprimir um intervalo de Universidades
+          */
+        cin >> opc;
+        cout << "----------------------------\n";
+
+        int opt = 0; //  variável que receberá o retorno da função retornaEscolha();
+
+        switch (opc) // Dentro desse switch principal, dependendo de qual número o usuário digitar, diferentes funções são acionadas! Cada um com seus respctivos objetivos.
+        {
+        case 0:
+            break;
+        case 1:
+            int opcao;
+            newArqBi.open("rankToBi.bin", ios::in | ios::binary | ios::ate);
+            cout << "Escolha como o arquivo será ordenado:\n"
+                 << endl;
+            cout << "[1] - Por Ano\n"
+                 << "[2] - Por Pontuação\n";
+            cin >> opcao;
+            ordenacao(newArqBi, opcao);
+            newArqBi.close();
+            break;
+
+        case 2:
+			newArqBi.open("rankToBi.bin", ios::in | ios::binary | ios::out);
+            excluirUniversidade(newArqBi);
+            newArqBi.close();
+            break;
+
+        case 3:
+            cout << "Cadastrar nova(s) Universidades:\n"
+                 << endl;
+            cadastrarUniv(dados);
+            break;
+
+        case 4:
+            newArqBi.open("rankToBi.bin", ios::in | ios::binary | ios::ate);
+            cout << "[1] - Buscar por cidade\n[2] - Busca por país\nOu pressione qualquer número para voltar ao menu anterior\n> ";
+            opt = retornaEscolha();
+            if (opt == 1)
+            {
+                buscarPorCidade(newArqBi);
+                break;
+            }
+            else if (opt == 2)
+            {
+                buscarPorPais(newArqBi);
+                break;
+            }
+            else
+                break;
+
+        case 5:
+            cout << "Universidades Cadastradas e Ativas:" << endl
+                 << endl;
+            printUniversidades(dados);
+            break;
+
+        case 6:
+            cout << endl
+                 << "Arquivo CSV exportado!" << endl;
+            newArqBi.open("rankToBi.bin", ios::binary | ios::in | ios::out | ios::ate);
+            exportarCSV(newArqBi);
+            newArqBi.close();
+            break;
+        case 7:
+            newArqBi.open("rankToBi.bin", ios::binary | ios::in | ios::out | ios::ate);
+            imprimeGap(newArqBi);
+            newArqBi.close();
+            break;
+        default:
+            cout << "DIGITE UMA OPÇÃO VÁLIDA !\n";
+        }
+    } while (opc != 0);
+
+    return 0;
+}
+
+void printMenu() // Subprograma no qual sempre orientrá o usuário em relação as suas opções de escolha na manipulação dos arquivos;
+{
+    cout << "\n|--------------MENU--------------|\n"
+         << endl;
+    cout << "[0] - Encerrar programa\n";
+    cout << "[1] - Ordenar arquivo\n";
+    cout << "[2] - Remover Universidade\n";
+    cout << "[3] - Adicionar Universidade\n";
+    cout << "[4] - Buscar\n";
+    cout << "[5] - Imprimir Universidades cadastradas\n";
+    cout << "[6] - Converter binário para CSV\n";
+    cout << "[7] - Imprimir um intervalo de Universidades\n"
+         << endl;
+    cout << "\nEscolha uma opção! > ";
+}
+
 void excluirUniversidade(fstream &newArqBi)
 {
 
-    newArqBi.seekg(0,ios::end);
+	newArqBi.seekg(0,ios::end);
     int quantUni = newArqBi.tellg()/sizeof(Dados);
     Dados universidade;
 	
@@ -63,22 +221,6 @@ Dados convertVetor(string vetor[]) // Subprograma no qual trabalha em conjunto c
     strcpy(dados.pais, vetor[4].c_str());
 
     return dados;
-}
-
-void printMenu() // Subprograma no qual sempre orientrá o usuário em relação as suas opções de escolha na manipulação dos arquivos;
-{
-    cout << "\n|--------------MENU--------------|\n"
-         << endl;
-    cout << "[0] - Encerrar programa\n";
-    cout << "[1] - Ordenar arquivo\n";
-    cout << "[2] - Remover Universidade\n";
-    cout << "[3] - Adicionar Universidade\n";
-    cout << "[4] - Buscar\n";
-    cout << "[5] - Imprimir Universidades cadastradas\n";
-    cout << "[6] - Converter binário para CSV\n";
-    cout << "[7] - Imprimir um intervalo de Universidades\n"
-         << endl;
-    cout << "\nEscolha uma opção! > ";
 }
 
 void intercala(Dados *a, int inicio, int meio, int fim, int aux_opcao) // Subprograma que funciona em conjunta com o Subprograma mergesort(); O objetivo de ambos é ordenar Ano e Pontuação;
@@ -452,130 +594,3 @@ void imprimeGap(fstream &arqBi)
     arqBi.close();
 }
 
-int main()
-{
-
-    // Aqui começa a conversão dos dados do arquivo .csv para o arquivo binário;
-
-    SetConsoleOutputCP(CP_UTF8);
-    ifstream arqCSV("rankUniversidades.csv");
-    fstream newArqBi;
-    newArqBi.open("rankToBi.bin", ios::binary | ios::out | ios::in);
-    string vetor[5];
-    string coluna;
-    string aux;
-    Dados dados;
-
-    while (getline(arqCSV, aux))
-    {
-        stringstream linha(aux);
-        for (int i = 0; i < 5; i++)
-        {
-            getline(linha, coluna, ';');
-            vetor[i] = coluna;
-        }
-
-        dados = convertVetor(vetor); // Até então todos os dados se encontram como string, porém a partir de agora são convertidos para seus devidos tipos por meio desse subprograma;
-        newArqBi.write((char *)&dados, sizeof(Dados));
-    }
-    newArqBi.close();
-
-    cout << "Arquivo gerado com sucesso!" << endl;
-
-    arqCSV.close();
-
-    printUniversidades(dados); // Mostra as Faculdades já cadastradas assim que o programa é inicializado;
-
-    // Os dados iniciais na abetura atual do programa são mostrados logo de cara para o usuáio, para que o mesmo tenha noção do estado corrente do arquivo binário;
-
-    int opc; // varável do switch
-
-    // MENU DE OPÇÕES COM CHAMADA DA FUNÇÃO printMenu();
-    do
-    {
-        // printUniversidades(dados);
-        printMenu();
-        /*[0] - Encerrar programa
-          [1] - Ordenar arquivo
-          [2] - Remover universidade
-          [3] - Adicionar universidade
-          [4] - Buscar
-          [5] - Imprimir Universidades cadastradas
-          [6] - Converter Binário para CSV
-          [7] - Imprimir um intervalo de Universidades
-          */
-        cin >> opc;
-        cout << "----------------------------\n";
-
-        int opt = 0; //  variável que receberá o retorno da função retornaEscolha();
-
-        switch (opc) // Dentro desse switch principal, dependendo de qual número o usuário digitar, diferentes funções são acionadas! Cada um com seus respctivos objetivos.
-        {
-        case 0:
-            break;
-        case 1:
-            int opcao;
-            newArqBi.open("rankToBi.bin", ios::in | ios::binary | ios::ate);
-            cout << "Escolha como o arquivo será ordenado:\n"
-                 << endl;
-            cout << "[1] - Por Ano\n"
-                 << "[2] - Por Pontuação\n";
-            cin >> opcao;
-            ordenacao(newArqBi, opcao);
-            newArqBi.close();
-            break;
-
-        case 2:
-			newArqBi.open("rankToBi.bin", ios::in | ios::binary | ios::out);
-            excluirUniversidade(newArqBi);
-            newArqBi.close();
-            break;
-
-        case 3:
-            cout << "Cadastrar nova(s) Universidades:\n"
-                 << endl;
-            cadastrarUniv(dados);
-            break;
-
-        case 4:
-            newArqBi.open("rankToBi.bin", ios::in | ios::binary | ios::ate);
-            cout << "[1] - Buscar por cidade\n[2] - Busca por país\nOu pressione qualquer número para voltar ao menu anterior\n> ";
-            opt = retornaEscolha();
-            if (opt == 1)
-            {
-                buscarPorCidade(newArqBi);
-                break;
-            }
-            else if (opt == 2)
-            {
-                buscarPorPais(newArqBi);
-                break;
-            }
-            else
-                break;
-
-        case 5:
-            cout << "Universidades Cadastradas e Ativas:" << endl
-                 << endl;
-            printUniversidades(dados);
-            break;
-
-        case 6:
-            cout << endl
-                 << "Arquivo CSV exportado!" << endl;
-            newArqBi.open("rankToBi.bin", ios::binary | ios::in | ios::out | ios::ate);
-            exportarCSV(newArqBi);
-            newArqBi.close();
-            break;
-        case 7:
-            newArqBi.open("rankToBi.bin", ios::binary | ios::in | ios::out | ios::ate);
-            imprimeGap(newArqBi);
-            newArqBi.close();
-            break;
-        default:
-            cout << "DIGITE UMA OPÇÃO VÁLIDA !\n";
-        }
-    } while (opc != 0);
-
-    return 0;
-}
