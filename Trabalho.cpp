@@ -137,7 +137,7 @@ int main()
             }
             else
                 break;
-
+			newArqBi.close();
         case 5:
             cout << "Universidades Cadastradas e Ativas:" << endl
                  << endl;
@@ -157,7 +157,7 @@ int main()
             newArqBi.close();
             break;
         default:
-            cout << "DIGITE UMA OPÇÃO VALIDA !\n";
+            cout << "DIGITE UMA OPCAO VALIDA !\n";
         }
     } while (opc != 0);
 
@@ -310,12 +310,14 @@ void ordenacao(fstream &newArqBi, int aux_opcao) // Subprograma no qual permite 
         // ordena por pontuação
         break;
     default:
-        cout << "OPÇÃO INVÁLIDA!\n";
+        cout << "OPCAO INVALIDA!\n";
         break;
     }
     // mostrar na tela a ordenação
     /*for(int i=0; i < quantUni; ++i){
-        cout << vet[i].ano << " " << vet[i].nome << " " <<vet[i].pontuacao << " " << vet[i].cidade << " " << vet[i].pais << endl;
+        cout << vet[i].ano << " " << vet[i].nome << " " 
+             <<vet[i].pontuacao << " " << vet[i].cidade << " " 
+             << vet[i].pais << " " << vet[i].valido << endl;
     }
     */
     newArqBi.open("rankToBi.bin", ios::trunc | ios::out);
@@ -356,7 +358,7 @@ void excluirUniversidade(fstream &newArqBi)
         }
         else if(verificacao == false)
             cout << endl
-                 << "Universidade já excluida!" << endl
+                 << "Universidade ja excluida!" << endl
                  << endl;
     }
     else
@@ -392,7 +394,7 @@ void cadastrarUniv(Dados dados) // Subprograma no qual permite o usuário adicio
         cin.ignore();
         cout << "Cidade: ";
         cin.getline(dados.cidade, 200);
-        cout << "País: ";
+        cout << "Pais: ";
         cin.getline(dados.pais, 200);
 
         novoCadastro.write((char *)&dados, sizeof(Dados));
@@ -428,7 +430,7 @@ void cadastrarUniv(Dados dados) // Subprograma no qual permite o usuário adicio
         break;
 
     default:
-        cout << "Opação Invalida";
+        cout << "Opcao Invalida";
         break;
     }
 
