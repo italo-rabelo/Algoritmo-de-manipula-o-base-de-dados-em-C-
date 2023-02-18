@@ -3,7 +3,6 @@
 #include <string>
 #include <cstring>
 #include <sstream>
-#include <windows.h>
 // Participantes > Bernardo Bertante Martins, Esther Silva Magalhaes, Ítalo Alves Rabelo
 
 // Ano;Nome;Pontuacao;Cidade;País
@@ -23,6 +22,7 @@ struct Dados // Struct na qual os dados do arquivo seguirão com o seu padrão (
     int valido = 1;
 };
 
+// Prototipagem dos subprogramas na ordem em que aparecem
 void printMenu();
 void excluirUniversidade(fstream &newArqBi);
 Dados convertVetor(string vetor[]);
@@ -42,7 +42,6 @@ int main()
 
     // Aqui começa a conversão dos dados do arquivo .csv para o arquivo binário;
 
-    SetConsoleOutputCP(CP_UTF8);
     ifstream arqCSV("rankUniversidades.csv");
     fstream newArqBi;
     newArqBi.open("rankToBi.bin", ios::binary | ios::out | ios::in);
@@ -101,10 +100,10 @@ int main()
         case 1:
             int opcao;
             newArqBi.open("rankToBi.bin", ios::in | ios::binary | ios::ate);
-            cout << "Escolha como o arquivo será ordenado:\n"
+            cout << "Escolha como o arquivo sera ordenado:\n"
                  << endl;
             cout << "[1] - Por Ano\n"
-                 << "[2] - Por Pontuação\n";
+                 << "[2] - Por Pontuacao\n";
             cin >> opcao;
             ordenacao(newArqBi, opcao);
             newArqBi.close();
@@ -124,7 +123,7 @@ int main()
 
         case 4:
             newArqBi.open("rankToBi.bin", ios::in | ios::binary | ios::ate);
-            cout << "[1] - Buscar por cidade\n[2] - Busca por país\nOu pressione qualquer número para voltar ao menu anterior\n> ";
+            cout << "[1] - Buscar por cidade\n[2] - Busca por pais\nOu pressione qualquer numero para voltar ao menu anterior\n> ";
             opt = retornaEscolha();
             if (opt == 1)
             {
@@ -158,7 +157,7 @@ int main()
             newArqBi.close();
             break;
         default:
-            cout << "DIGITE UMA OPÇÃO VÁLIDA !\n";
+            cout << "DIGITE UMA OPÇÃO VALIDA !\n";
         }
     } while (opc != 0);
 
@@ -178,7 +177,7 @@ void printMenu() // Subprograma no qual sempre orientrá o usuário em relação
     cout << "[6] - Exportar para CSV\n";
     cout << "[7] - Imprimir um intervalo de Universidades\n"
          << endl;
-    cout << "\nEscolha uma opção! > ";
+    cout << "\nEscolha uma opcao! > ";
 }
 
 void excluirUniversidade(fstream &newArqBi)
@@ -187,7 +186,7 @@ void excluirUniversidade(fstream &newArqBi)
     int quantUni = newArqBi.tellg() / sizeof(Dados);
     Dados universidade;
 
-    cout << "\nDigite a posição da universidade a ser excluida (1 - " << quantUni << ")\n> ";
+    cout << "\nDigite a posicao da universidade a ser excluida (1 - " << quantUni << ")\n> ";
     int posicao;
     cin >> posicao;
 
@@ -209,11 +208,11 @@ void excluirUniversidade(fstream &newArqBi)
         }
         else if(verificacao == false)
             cout << endl
-                 << "Universidade já excluida!" << endl
+                 << "Universidade ja excluida!" << endl
                  << endl;
     }
     else
-        cout << "\nNão há universidade nesta posicao!\n";
+        cout << "\nNao ha universidade nesta posicao!\n";
 
     newArqBi.close();
 }
@@ -348,7 +347,7 @@ void ordenacao(fstream &newArqBi, int aux_opcao) // Subprograma no qual permite 
         // ordena por pontuação
         break;
     default:
-        cout << "OPÇÃO INVÁLIDA!\n";
+        cout << "OPÇÃO INVALIDA!\n";
         break;
     }
     // mostrar na tela a ordenação
@@ -399,7 +398,7 @@ void cadastrarUniv(Dados dados) // Subprograma no qual permite o usuário adicio
         break;
 
     case 2: // AO SER EXECUTADO, MAIS DE UMA FACULDADE NOVA SERÁ ADICIONADA AO ARQUIVO (ENTRARÁ EM UM LOOP [FOR()]);
-        cout << "Quantas ao todo você deseja cadastrar? ";
+        cout << "Quantas ao todo voce deseja cadastrar? ";
         int segOpc;
         cin >> segOpc;
         cout << endl;
@@ -418,7 +417,7 @@ void cadastrarUniv(Dados dados) // Subprograma no qual permite o usuário adicio
             cin.ignore();
             cout << "Cidade: ";
             cin.getline(dados.cidade, 200);
-            cout << "País: ";
+            cout << "Pais: ";
             cin.getline(dados.pais, 200);
 
             novoCadastro.write((char *)&dados, sizeof(Dados));
@@ -428,14 +427,14 @@ void cadastrarUniv(Dados dados) // Subprograma no qual permite o usuário adicio
         break;
 
     default:
-        cout << "Opação Inválida";
+        cout << "Opcao Invalida";
         break;
     }
 
     cout << "Como deseja ordenar as Faculdades que cadastrou?" << endl
          << endl
          << "[1] - Por Ano" << endl
-         << "[2] - Por Pontuação" << endl;
+         << "[2] - Por Pontuacao" << endl;
     cin >> opc;
 
     ordenacao(novoCadastro, opc);
@@ -478,7 +477,7 @@ void buscarPorCidade(fstream &newArqBi) // Subprograma que tem a função de faz
     }
 
     if (aux == 0)
-        cout << "Não ha universidades cadastradas nesta cidade!\n";
+        cout << "Nao ha universidades cadastradas nesta cidade!\n";
 
     newArqBi.close();
 }
@@ -489,7 +488,7 @@ void buscarPorPais(fstream &newArqBi) // Subprograma que tem a função de fazer
     long int tamArq = newArqBi.tellg();
     int quantUni = int(tamArq / sizeof(Dados));
 
-    cout << "\nDigite o nome do país > ";
+    cout << "\nDigite o nome do pais > ";
     cin.clear();
     cin.ignore();
     char pais[25];
@@ -518,7 +517,7 @@ void buscarPorPais(fstream &newArqBi) // Subprograma que tem a função de fazer
     }
 
     if (aux == 0)
-        cout << "Não ha universidades cadastradas neste pais!\n";
+        cout << "Nao ha universidades cadastradas neste pais!\n";
 
     newArqBi.close();
 }
@@ -572,30 +571,38 @@ void imprimeGap(fstream &arqBi)
 	long int tamArq = arqBi.tellg();
     int quantUniv = int((tamArq / sizeof(Dados)));
     
-    cout << "Escolha o GAP que você quer imprimir no Arquivo, de 1 a " << quantUniv << ':' << endl
+    cout << "Escolha o GAP que voce quer imprimir no Arquivo, de 1 a " << quantUniv << ':' << endl
          << endl;
     Dados universidade;
     int gapInicio, gapFim;
     cin >> gapInicio >> gapFim;
     cin.ignore();
-
-    if ((gapInicio > 0) and (gapInicio < quantUniv) and (gapFim > 0) and (gapFim < quantUniv))
+	int cont_univ_validas = (gapFim) - (gapInicio - 1);
+	bool verificacao = false;
+	
+	if ((gapInicio > 0) and (gapInicio < quantUniv) and (gapFim > 0) and (gapFim < quantUniv))
     {
         cout << endl
              << "Universidades Cadastradas e Ativas entre as linhas " << gapInicio << " - " << gapFim << ":" << endl
              << endl;
-        while (gapInicio <= gapFim)
+        while (gapInicio <= gapFim and cont_univ_validas <= gapFim)
         {
             arqBi.seekg((gapInicio - 1) * sizeof(Dados)); //
             arqBi.read((char *)&universidade, sizeof(Dados));
             if (universidade.valido == 1)
             {
                 cout << universidade.ano << " " << universidade.nome << " " << universidade.pontuacao << " " << universidade.cidade << " " << universidade.pais << endl;
+				verificacao = true;
 			}
-			gapInicio++;
+			if(verificacao == false){
+				--cont_univ_validas; // Quando a verificação/universidade é falsa, ou seja, está "apagada", a cont_univ_validas guarda um lugar para a próxima universidade que é válida/true
+				++gapFim;            // O fim é aumentado a fim de percorrer mais uma linha para essa próxima universidade válida/true        
+			}                        
+			++gapInicio;
+			verificacao = false;
         }
     }
     else
-        cout << "Intervalo inválido!\n";
+        cout << "Intervalo invalido!\n";
     arqBi.close();
 }
