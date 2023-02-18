@@ -5,7 +5,7 @@
 #include <sstream>
 // Participantes > Bernardo Bertante Martins, Esther Silva Magalhaes, Ítalo Alves Rabelo
 
-// Ano;Nome;Pontuacao;Cidade;País
+// Campos: Ano;Nome;Pontuacao;Cidade;País
 
 // Ordenação por Ano e por Pontuação
 // Busca por Cidade e por País
@@ -22,17 +22,17 @@ struct Dados // Struct na qual os dados do arquivo seguirão com o seu padrão (
     int valido = 1;
 };
 
-// Prototipagem dos subprogramas na ordem em que aparecem
-void printMenu();
-void excluirUniversidade(fstream &newArqBi);
+// Prototipagem dos subprogramas na ordem em que aparecem depois do int main
 Dados convertVetor(string vetor[]);
+void printMenu();
 void intercala(Dados *a, int inicio, int meio, int fim, int aux_opcao);
 void mergesort(Dados *a, int inicio, int fim, int escolha);
 void ordenacao(fstream &newArqBi, int aux_opcao);
+void excluirUniversidade(fstream &newArqBi);
 void cadastrarUniv(Dados dados);
+int retornaEscolha();
 void buscarPorCidade(fstream &newArqBi);
 void buscarPorPais(fstream &newArqBi);
-int retornaEscolha();
 void printUniversidades(Dados dados);
 void exportarCSV(fstream &arqBi);
 void imprimeGap(fstream &arqBi);
@@ -164,7 +164,19 @@ int main()
     return 0;
 }
 
-void printMenu() // Subprograma no qual sempre orientrá o usuário em relação as suas opções de escolha na manipulação dos arquivos;
+Dados convertVetor(string vetor[]) // Subprograma no qual trabalha em conjunto com as primeiras linhas da função main(); Converte as Strings provenientes do arquivo .csv para int, char e float;
+{
+    Dados dados; //
+    dados.ano = stoi(vetor[0]);
+    strcpy(dados.nome, vetor[1].c_str());
+    dados.pontuacao = stof(vetor[2]);
+    strcpy(dados.cidade, vetor[3].c_str());
+    strcpy(dados.pais, vetor[4].c_str());
+
+    return dados;
+}
+
+void printMenu() // Subprograma no qual sempre orientará o usuário em relação as suas opções de escolha na manipulação dos arquivos;
 {
     cout << "\n|--------------MENU--------------|\n"
          << endl;
@@ -178,55 +190,6 @@ void printMenu() // Subprograma no qual sempre orientrá o usuário em relação
     cout << "[7] - Imprimir um intervalo de Universidades\n"
          << endl;
     cout << "\nEscolha uma opcao! > ";
-}
-
-void excluirUniversidade(fstream &newArqBi)
-{
-    newArqBi.seekg(0, ios::end);
-    int quantUni = newArqBi.tellg() / sizeof(Dados);
-    Dados universidade;
-
-    cout << "\nDigite a posicao da universidade a ser excluida (1 - " << quantUni << ")\n> ";
-    int posicao;
-    cin >> posicao;
-
-	bool verificacao = false;
-    newArqBi.seekg(0, newArqBi.beg); // POSICIONA O PONTEIRO DE LEITURA NO INÍCIO DO ARQUIVO
-    int cont = posicao - 1;              // CONTADOR DO LOOP
-    if (cont >= 0 and cont < quantUni)
-    {
-        newArqBi.seekg(cont * sizeof(Dados));
-        newArqBi.read((char *)&universidade, sizeof(Dados));
-        if (universidade.valido == 1)
-        {
-            cout << universidade.nome << endl;
-            // FAZ A CONVERSÃO DA VARIÁVEL 'VALIDO' PARA 0 E ESCREVE NOVAMENTE O REGISTRO NO ARQUIVO
-            universidade.valido = 0;
-            newArqBi.seekp(cont * sizeof(Dados));
-            newArqBi.write((char *)&universidade, sizeof(Dados));
-            verificacao = true;
-        }
-        else if(verificacao == false)
-            cout << endl
-                 << "Universidade ja excluida!" << endl
-                 << endl;
-    }
-    else
-        cout << "\nNao ha universidade nesta posicao!\n";
-
-    newArqBi.close();
-}
-
-Dados convertVetor(string vetor[]) // Subprograma no qual trabalha em conjunto com as primeiras linhas da função main(); Converte as Strings provenientes do arquivo .csv para int, char e float;
-{
-    Dados dados; //
-    dados.ano = stoi(vetor[0]);
-    strcpy(dados.nome, vetor[1].c_str());
-    dados.pontuacao = stof(vetor[2]);
-    strcpy(dados.cidade, vetor[3].c_str());
-    strcpy(dados.pais, vetor[4].c_str());
-
-    return dados;
 }
 
 void intercala(Dados *a, int inicio, int meio, int fim, int aux_opcao) // Subprograma que funciona em conjunta com o Subprograma mergesort(); O objetivo de ambos é ordenar Ano e Pontuação;
@@ -347,7 +310,7 @@ void ordenacao(fstream &newArqBi, int aux_opcao) // Subprograma no qual permite 
         // ordena por pontuação
         break;
     default:
-        cout << "OPÇÃO INVALIDA!\n";
+        cout << "OPÇÃO INVÁLIDA!\n";
         break;
     }
     // mostrar na tela a ordenação
@@ -362,6 +325,44 @@ void ordenacao(fstream &newArqBi, int aux_opcao) // Subprograma no qual permite 
         newArqBi.seekg(i * sizeof(Dados));
         newArqBi.write((char *)&vet[i], sizeof(vet[i]));
     }
+}
+
+
+void excluirUniversidade(fstream &newArqBi)
+{
+    newArqBi.seekg(0, ios::end);
+    int quantUni = newArqBi.tellg() / sizeof(Dados);
+    Dados universidade;
+
+    cout << "\nDigite a posicao da universidade a ser excluida (1 - " << quantUni << ")\n> ";
+    int posicao;
+    cin >> posicao;
+
+	bool verificacao = false;
+    newArqBi.seekg(0, newArqBi.beg); // POSICIONA O PONTEIRO DE LEITURA NO INÍCIO DO ARQUIVO
+    int cont = posicao - 1;              // CONTADOR DO LOOP
+    if (cont >= 0 and cont < quantUni)
+    {
+        newArqBi.seekg(cont * sizeof(Dados));
+        newArqBi.read((char *)&universidade, sizeof(Dados));
+        if (universidade.valido == 1)
+        {
+            cout << universidade.nome << endl;
+            // FAZ A CONVERSÃO DA VARIÁVEL 'VALIDO' PARA 0 E ESCREVE NOVAMENTE O REGISTRO NO ARQUIVO
+            universidade.valido = 0;
+            newArqBi.seekp(cont * sizeof(Dados));
+            newArqBi.write((char *)&universidade, sizeof(Dados));
+            verificacao = true;
+        }
+        else if(verificacao == false)
+            cout << endl
+                 << "Universidade já excluida!" << endl
+                 << endl;
+    }
+    else
+        cout << "\nNao ha universidade nesta posicao!\n";
+
+    newArqBi.close();
 }
 
 void cadastrarUniv(Dados dados) // Subprograma no qual permite o usuário adicionar 1 ou Mais Universidades ao arquivo binário quando chamado;
@@ -427,7 +428,7 @@ void cadastrarUniv(Dados dados) // Subprograma no qual permite o usuário adicio
         break;
 
     default:
-        cout << "Opcao Invalida";
+        cout << "Opação Invalida";
         break;
     }
 
@@ -440,6 +441,13 @@ void cadastrarUniv(Dados dados) // Subprograma no qual permite o usuário adicio
     ordenacao(novoCadastro, opc);
 
     novoCadastro.close();
+}
+
+int retornaEscolha()
+{
+    int n;
+    cin >> n;
+    return n;
 }
 
 void buscarPorCidade(fstream &newArqBi) // Subprograma que tem a função de fazer a busca de determinada cidade expecificada pelo usuário dentro do arquivo binário;
@@ -522,13 +530,6 @@ void buscarPorPais(fstream &newArqBi) // Subprograma que tem a função de fazer
     newArqBi.close();
 }
 
-int retornaEscolha() //
-{
-    int n;
-    cin >> n;
-    return n;
-}
-
 void printUniversidades(Dados dados) // Subprograma que exibe/printa no terminal o atual estado(informações) do arquivo binário, porém em decimal;
 {
     ifstream arqBi;
@@ -571,7 +572,7 @@ void imprimeGap(fstream &arqBi)
 	long int tamArq = arqBi.tellg();
     int quantUniv = int((tamArq / sizeof(Dados)));
     
-    cout << "Escolha o GAP que voce quer imprimir no Arquivo, de 1 a " << quantUniv << ':' << endl
+    cout << "Escolha o intervalo que voce quer imprimir no Arquivo, de 1 a " << quantUniv << ':' << endl
          << endl;
     Dados universidade;
     int gapInicio, gapFim;
