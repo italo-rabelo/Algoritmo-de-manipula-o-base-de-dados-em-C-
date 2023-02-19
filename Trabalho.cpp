@@ -535,13 +535,21 @@ void buscarPorPais(fstream &newArqBi) // Subprograma que tem a função de fazer
 void printUniversidades(Dados dados) // Subprograma que exibe/printa no terminal o atual estado(informações) do arquivo binário, porém em decimal;
 {
     ifstream arqBi;
-    arqBi.open("rankToBi.bin", ios::binary | ios::in);
-    while (arqBi.read((char *)&dados, sizeof(Dados)))
+    arqBi.open("rankToBi.bin", ios::binary | ios::in | ios::ate);
+    long int tamArq = arqBi.tellg();
+    int quantUni = int(tamArq / sizeof(Dados));
+
+    int cont = 0;
+    arqBi.seekg (0, arqBi.beg);
+    while (cont < quantUni)
     {
+        arqBi.seekg (cont * sizeof (Dados));
+        arqBi.read((char *)&dados, sizeof(Dados));
         if (dados.valido == 1)
         {
-            cout << dados.ano << " " << dados.nome << " " << dados.pontuacao << " " << dados.cidade << " " << dados.pais << " " << dados.valido << endl;
+            cout << dados.ano << " " << dados.nome << " " << dados.pontuacao << " " << dados.cidade << " " << dados.pais << endl;
         }
+        cont++;
     }
     arqBi.close();
 }
